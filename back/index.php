@@ -6,5 +6,4 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 // header("Access-Control-Allow-Origin: $origin");
 // header("Access-Control-Allow-Headers: Content-Type");
 //*************************************************************************************
-$server = json_encode($_SERVER);
-echo $server;
+require_once('router/routers.php');
