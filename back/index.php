@@ -9,3 +9,4 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 //*************************************************************************************
 require_once('./data/BaseDeDados.php');
 require_once('router/index.php');
+// Comentário teste
