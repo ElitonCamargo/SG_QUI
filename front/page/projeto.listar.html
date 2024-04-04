@@ -1,0 +1,249 @@
+
+    <h2>Projetos</h2>
+    <table id="tabela-projetos" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nome</th>
+                <th>Data de Início</th>
+                <th>Previsão de Término</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os elementos serão preenchidos aqui dinamicamente -->
+        </tbody>
+    </table>
+
+
+      
+      <!-- Modal -->
+      <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">                        
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="modalDetalhesLabel">Detalhes do projeto</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>            
+            <div class="modal-body">
+              <div class="container">
+
+                <div class="row justify-content-end">
+                  <div class="col-md-2 text-end">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                      <button type="button" class="btn btn btn-primary btn-sm me-2" id="btnSalvarEdicao" disabled><i style="font-size: 1.2rem;" class="bi bi-floppy"></i></button>
+                      <button type="button" class="btn btn-secondary btn-sm" id="btnLiberarEdicao"><i style="font-size: 1.2rem;" class="bi bi-pencil-square"></i></button>         
+                    </div>
+                  </div>
+                </div>
+
+                <form class="container mt-5" id="formProjeto">
+                  <div class="row">
+                    <div class="col-md-2">
+                      <div class="mb-3">
+                        <label for="codigo" class="form-label">Código</label>
+                        <label for="codigo" class="form-control" id="modal_codigo">54hg65</label>
+                      </div>
+                    </div>
+                    <div class="col-md-10">
+                      <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="modal_nome" name="nome" required>
+                      </div>
+                    </div>
+                    <div class="col-md-12">       
+                      <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="modal_descricao" name="descricao" rows="2"></textarea>
+                      </div>
+                    </div>      
+                    <div class="col-md-4">       
+                      <div class="mb-3">
+                        <label for="data_inicio" class="form-label">Data de Início</label>
+                        <input type="date" class="form-control" id="modal_data_inicio" name="data_inicio">
+                      </div>
+                    </div>
+                    <div class="col-md-4">       
+                      <div class="mb-3">
+                        <label for="previsao_termino" class="form-label">Previsão de Término</label>
+                        <input type="date" class="form-control" id="modal_previsao_termino" name="previsao_termino">
+                      </div>
+                    </div>
+                    <div class="col-md-4">       
+                      <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="modal_status" name="status">
+                          <option value="0">Não Iniciado</option>
+                          <option value="1">Em Andamento</option>
+                          <option value="2">Finalizado</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="cliente" class="form-label">Cliente</label>
+                        <select class="form-select" id="modal_cliente" name="cliente">
+                          <option value=""></option>
+                        </select>
+                      </div>
+                    </div>     
+                  </div>
+                  <button class="btn btn-primary" type="submit">Cadastrar</button>
+                </form>
+
+                <!-- <div id="addGarantias" style="display: none;"> -->
+<div class="modal-header">
+</div>
+<h1 class="modal-title fs-5 mb-3" id="modalDetalhesLabel">Adicionar garantias</h1>
+<div>
+  <table class="table" id="tabela-garantias">    
+    <thead>
+      <tr>
+        <th scope="col">Elemento</th>
+        <th scope="col">Percentual</th>
+      </tr>
+      <tr>        
+        <th scope="col">
+          <div class="input-group ">
+            <input type="text" id="inputBusca" class="form-control" placeholder="Digite para filtrar..." autocomplete="off">
+          </div>
+          <div id="listaItens" class="list-group" style="display: none; position: absolute; width: 35%;"></div>
+          <input type="text" id="modal-elementoId" style="display: none;">
+        </th>
+        <th scope="col">
+          <div class="input-group ">
+            <input type="text" id="inputPercentual" class="form-control" placeholder="%">
+          </div>
+        </th>
+        <th>          
+          <div class="input-group">
+            <button type="submit" class="btn btn-primary btn-sm" id="btnCadastrarGarantia"><i style="font-size: 1.1rem;" class="bi bi-floppy"></i></button>
+          </div>  
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <!-- Adicione mais linhas conforme necessário -->
+    </tbody>
+  </table>
+
+</div>
+
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+
+<script> 
+  
+  const reqDeClientes =  (async () => {
+    return await req_GET('http://localhost:3000/cliente').then().catch();    
+  })();
+
+  let listaDeProjetos;  
+  const reqDeProjetos = (async () => {
+    return await req_GET('http://localhost:3000/projeto').then().catch();
+  })();
+
+
+  
+  // Montando dados para a exibição => Vinculando cliente ao projeto;
+  $(document).ready(()=>{
+    reqDeProjetos.then(projetos =>{
+      reqDeClientes.then(clientes =>{
+        projetos.map(projeto =>{
+          projeto.cliente = clientes.find(cliente => cliente.id == projeto.cliente);
+        })
+        listaDeProjetos = projetos;
+        addProjetosATabela(projetos);
+      })
+    })
+  });
+
+  const addProjetosATabela = (projetos)=>{
+    const linhaTable = (id,nome,data_inicio,data_termino,status) => {     
+        return `
+            <tr>
+                <td>${id}</td>
+                <td>${nome}</td>
+                <td>${data_inicio}</td>
+                <td>${data_termino}</td>
+                <td>${status}</td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="buscarProjetoPorId(${id})"><i style="font-size: 1.2rem;" class="bi bi-binoculars-fill"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm"><i style="font-size: 1.2rem;" class="bi bi-trash"></i></button>
+                </td>
+            </tr>                
+        `;
+    };
+    const tabela = $('#tabela-projetos tbody');
+    tabela.html("");
+    projetos.forEach(projeto => {
+      tabela.append(linhaTable(projeto.id,projeto.nome,projeto.data_inicio,projeto.previsao_termino,projeto.status))
+    });
+  }
+
+
+const buscarProjetoPorId = async (id)=>{
+
+    const addLinha = (id_garantia,id_elemento,id_composto,elemento, percentual) => {
+        return `
+            <tr>
+                
+                <td>${elemento}</td>
+                <td>${percentual}%</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm"><i style="font-size: 1.2rem;" class="bi bi-trash"></i></button>
+                </td>
+            </tr>                
+        `;
+    };
+
+    let projeto = listaDeProjetos.find(projeto => projeto.id == id);
+ 
+    $("#modal_codigo").val(projeto.id);
+    $("#modal_nome").val(projeto.nome);
+    $("#modal_descricao").val(projeto.descricao);
+    $("#modal_data_inicio").val(projeto.data_inicio);
+    $("#modal_previsao_termino").val(projeto.previsao_termino);
+    $("#modal_status").val(projeto.status);
+    $("#modal_cliente").val(projeto.cliente.nome);
+
+      // req_GET(`http://localhost:3000/composto/${id}`).then(composto => {
+      //       $('#modal-compostoId').val(composto.id);
+      //       $('#modal-nome').val(composto.nome);
+      //       $('#modal-formula').val(composto.formula);
+      //       $('#modal-descricao').val(composto.descricao);
+      //       // Exibir o modal
+      //       buscarGarantiaComposto(id,(garantias)=>{
+      //         req_GET(`http://localhost:3000/elemento`).then(elementos =>{
+      //           globalElementos = elementos;
+      //           garantias.map(garantia =>{
+      //             garantia.elemento = elementos.find(elemento => elemento.id == garantia.elemento)                 
+      //           })
+      //           const tabela = $('#tabela-garantias tbody');
+      //           tabela.html("");
+      //           let total = 0;
+      //           garantias.forEach(garantia => {
+      //             total += parseFloat(garantia.percentual);
+      //             tabela.append(addLinha(garantia.id, garantia.elemento.id,garantia.composto,garantia.elemento.nome, garantia.percentual));
+      //           });
+      //           tabela.append(`<tr><th>Total</th><th>${total}%</th>`);
+      //         })
+      //       });
+      //       $('#modalDetalhes').modal('show');
+      // })
+      // .catch(error => {
+      //     console.error('Erro ao fazer solicitação GET:', error);
+      // });
+      $('#modalDetalhes').modal('show');
+}
+  
+</script>

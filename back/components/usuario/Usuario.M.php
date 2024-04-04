@@ -1,5 +1,5 @@
 <?php
-require_once '../../data/BaseDeDados.php';
+//require_once '../../data/BaseDeDados.php';
 class Usuario{
     public $id;
     public $nome;
@@ -76,6 +76,22 @@ class Usuario{
             if($stmt->execute()){
                 $stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
                 return $stmt->fetch(); 
+            }
+            return false;
+        } catch (\PDOException $e) {
+            $this->erro = 'Erro ao selecionar usuário: ' . $e->getMessage();
+            return false;
+        }
+    }
+    public function consultarTodos($filtro=""): array|bool
+    {
+        $cx = $this->cx();
+        $stmt = $cx->prepare("SELECT * FROM Usuario WHERE Usuario.nome like :filtro");
+        try {                    
+            $stmt->bindValue(':filtro', '%'.$filtro.'%');
+            $stmt->execute();
+            if($stmt->rowCount()){
+                return $stmt->fetchAll(PDO::FETCH_CLASS, __CLASS__);
             }
             return false;
         } catch (\PDOException $e) {

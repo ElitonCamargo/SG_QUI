@@ -1,0 +1,68 @@
+<h2>Cadastrar Composto Químico</h2>
+<div id="msgResult">
+
+</div>
+<form class="container mt-5" id="formComponente">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="nome" class="form-label">Código</label>
+          <input type="text" class="form-control" id="nome" name="nome" required>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome</label>
+          <input type="text" class="form-control" id="nome" name="nome" required>
+        </div>
+      </div>
+      <div class="col-md-2"> 
+        <div class="mb-3">
+          <label for="nome" class="form-label">Fórmula</label>
+          <input type="text" class="form-control" id="formula" name="formula" required>
+        </div>
+      </div>
+      <div class="col-md-2"> 
+        <div class="mb-3">
+          <label for="nome" class="form-label">CAS Number</label>
+          <input type="text" class="form-control" id="formula" name="formula" required>
+        </div>
+      </div>
+      <div class="col-md-2"> 
+        <div class="mb-3">
+          <label for="nome" class="form-label">Densidade g/cm³</label>
+          <input type="text" class="form-control" id="formula" name="formula" required>
+        </div>
+      </div>
+      <div class="col-md-12">       
+        <div class="mb-3">
+          <label for="propriedades" class="form-label">Descrição</label>
+          <textarea class="form-control" id="descricao" name="descricao" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" type="submit" id="compostoCadastrar">Cadastrar</button>
+</form>
+
+<script>
+
+  $(document).ready(function() {
+      $('#formComponente').on('submit', function(event) {
+          event.preventDefault();
+          let dados = {
+            nome : $("#nome").val(),
+            descricao : $("#descricao").val(),
+            formula : $("#formula").val()
+          }
+          compostoCadastrar(dados);
+          $(this).trigger('reset');
+      });
+  });
+
+  const compostoCadastrar = async (dados)=>{    
+        await req_POST("http://localhost:3000/composto", dados).then((result) => {
+          $("#msgResult").html(alertaPersonalizado('success','Composto ',' cadastrado com sucesso!'));
+        });        
+  }
+
+</script>

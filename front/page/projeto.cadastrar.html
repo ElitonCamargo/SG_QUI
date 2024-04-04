@@ -1,0 +1,94 @@
+<h2>Cadastrar Projetos</h2>
+<div id="msgResult">
+
+</div>
+<form class="container mt-5" id="formProjeto">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome</label>
+        <input type="text" class="form-control" id="nome" name="nome" required>
+      </div>
+    </div>
+    <div class="col-md-12">       
+      <div class="mb-3">
+        <label for="descricao" class="form-label">Descrição</label>
+        <textarea class="form-control" id="descricao" name="descricao" rows="2"></textarea>
+      </div>
+    </div>      
+    <div class="col-md-4">       
+      <div class="mb-3">
+        <label for="data_inicio" class="form-label">Data de Início</label>
+        <input type="date" class="form-control" id="data_inicio" name="data_inicio">
+      </div>
+    </div>
+    <div class="col-md-4">       
+      <div class="mb-3">
+        <label for="previsao_termino" class="form-label">Previsão de Término</label>
+        <input type="date" class="form-control" id="previsao_termino" name="previsao_termino">
+      </div>
+    </div>
+    <div class="col-md-4">       
+      <div class="mb-3">
+        <label for="status" class="form-label">Status</label>
+        <select class="form-select" id="status" name="status">
+          <option value="Não Iniciado">Não Iniciado</option>
+          <option value="Em Andamento">Em Andamento</option>
+          <option value="Finalizado">Finalizado</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="cliente" class="form-label">Cliente</label>
+        <select class="form-select" id="cliente" name="cliente">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>     
+  </div>
+  <button class="btn btn-primary" type="submit">Cadastrar</button>
+</form>
+
+<script>
+  const listaDeClientes = (async () => {
+    return await req_GET('http://localhost:3000/cliente').then().catch();
+  })();
+
+  $(document).ready(() => {
+    listaDeClientes.then(clientes => {
+      const select = $('#cliente');
+      clientes.forEach(cliente => {
+        select.append(`<option value="${cliente.id}">${cliente.nome}</option>`);
+      });
+      // select.change(function() {
+      //   const selectedCliente = $(this).children('option:selected').text();
+      //   console.log(selectedCliente); 
+      // });
+    });
+  });
+
+  
+  const projetoCadastrar = async (dados)=>{   
+    await req_POST("http://localhost:3000/projeto", dados).then((result) => {
+        $("#msgResult").html(alertaPersonalizado('success','Projeto ',' cadastrado com sucesso!'));
+    });
+  }
+
+  $(document).ready(function() {
+      $('#formProjeto').on('submit', function(event) {
+        event.preventDefault();
+        let dados = {
+          cliente: $("#cliente").val(),
+          nome: $("#nome").val(),
+          descricao: $("#descricao").val(),
+          data_inicio: $("#data_inicio").val(),
+          previsao_termino: $("#previsao_termino").val(),
+          status: $("#status").val()
+        }
+        projetoCadastrar(dados);
+        $(this).trigger('reset');
+      });
+  });
+
+</script>
