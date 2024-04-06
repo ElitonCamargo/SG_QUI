@@ -1,5 +1,9 @@
 <?php
-//require_once '../../data/BaseDeDados.php';
+namespace App\Model;
+
+use App\database\Conexao;
+use PDO;
+
 class Usuario{
     public $id;
     public $nome;
@@ -25,7 +29,7 @@ class Usuario{
     }
 
     private function cx(){
-        return (new BaseDeDados())->getConexao();
+        return (new Conexao())->getConexao();
     }
      
 

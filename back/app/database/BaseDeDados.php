@@ -1,5 +1,8 @@
 <?php
-class BaseDeDados{
+namespace App\database;
+use PDO;
+
+class Conexao{
     private $servidor;
     private $baseDeDados;
     private $usuario;
