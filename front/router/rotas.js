@@ -30,5 +30,9 @@ const rotas = [
     {
         'path'      :'/projeto/listar',
         'component' :'/front/page/projeto.listar.html'
+    },
+    {
+        'path'      :'/usuario/listar',
+        'component' :'/front/page/usuario.listar.html'
     }
 ];

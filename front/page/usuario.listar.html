@@ -1,0 +1,14 @@
+<h1>Usuario</h1>
+
+<script>
+    
+    $(document).ready(function() {
+       
+        req_GET("/back/usuario").then(data => {
+                console.log(data);
+        })
+        .catch(error => {
+            console.error('Erro ao fazer solicitação GET:', error);
+        });
+  });
+</script>

@@ -67,7 +67,7 @@
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown5">
             <li><a class="dropdown-item" href="#">Cadastrar</a></li>
-            <li><a class="dropdown-item" href="#">Listar</a></li>
+            <li><a class="dropdown-item" href="/usuario/listar">Listar</a></li>
           </ul>
         </li>
         <li class="nav-item">
