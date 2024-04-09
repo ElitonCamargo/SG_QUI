@@ -12,3 +12,4 @@ else{
     require_once("front/index.php");
 }
 // Por enquanto ainda não criei o controle de login (session_start()) no back-end
+// fiz o merge da TESTE para a master
