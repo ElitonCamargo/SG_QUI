@@ -8,5 +8,7 @@ if(isset($_SESSION['user_logado'])){
 else{
     //require_once("front/login.php");
     require_once("front/index.php");
+    //require_once("front/login.php");
+    require_once("front/index.php");
 }
-//comentário git
+// Por enquanto ainda não criei o controle de login (session_start()) no back-end

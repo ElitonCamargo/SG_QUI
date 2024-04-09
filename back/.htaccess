@@ -6,4 +6,5 @@ RewriteEngine on
 RewriteCond %{SCRIPT_FILENAME} !-f
 RewriteCond %{SCRIPT_FILENAME} !-d
 # Define que todas as informações passadas na url posterior ao domínio será atribuída como string em uma variável global chamada de url $_GET[‘url’]
-RewriteRule ^(.*)$ index.php?url=$1
+# RewriteRule ^(.*)$ index.php?url=$1
+RewriteRule ^(.*)$ index.php [L,QSA]

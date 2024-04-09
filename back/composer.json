@@ -1,0 +1,19 @@
+{
+    "name": "eliton/back",
+    "autoload": {
+        "psr-4": {
+            "Eliton\\Back\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Eliton Camargo",
+            "email": "camargoliveira@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^4.0",
+        "nyholm/psr7": "^1.8",
+        "laminas/laminas-diactoros": "^3.3"
+    }
+}
