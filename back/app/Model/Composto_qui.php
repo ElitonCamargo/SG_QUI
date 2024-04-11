@@ -23,6 +23,9 @@ class Composto_qui{
     public function getErro(){
         return $this->erro;
     }
+    public function setErro($erro){
+        $this->erro = $erro;
+    }
 
     private function cx(){
         return (new Conexao())->getConexao();
@@ -55,7 +58,7 @@ class Composto_qui{
     public function consultarTodos($filtro=""): array|bool
     {
         $cx = $this->cx();
-        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE compost_qui.nome like :filtro");
+        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE nome like :filtro");
         try {                    
             $stmt->bindValue(':filtro', '%'.$filtro.'%');
             $stmt->execute();
@@ -69,27 +72,11 @@ class Composto_qui{
         }
     }
 
-    public function consultarPorNome($nome): Composto_qui|bool
-    {
-        $cx = $this->cx();
-        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE compost_qui.nome = :nome");
-        try {
-            $stmt->bindParam('nome', $nome);          
-            if($stmt->execute()){
-                $stmt->setFetchMode(PDO::FETCH_CLASS, __CLASS__);
-                return $stmt->fetch(); 
-            }
-            return false;
-        } catch (\PDOException $e) {
-            $this->erro = 'Erro ao selecionar composto: '. $e->getMessage();
-            return false;
-        }
-    }
 
     public function consultarPorFormula($formula): Composto_qui|bool
     {
         $cx = $this->cx();
-        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE compost_qui.formula = :formula");
+        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE formula = :formula");
         try {
             $stmt->bindParam('formula', $formula);          
             if($stmt->execute()){
@@ -106,7 +93,7 @@ class Composto_qui{
     public function consultarPorId($id): Composto_qui|bool
     {
         $cx = $this->cx();
-        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE compost_qui.id = :id");
+        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE id = :id");
         try {
             $stmt->bindParam('id', $id);          
             if($stmt->execute()){
@@ -123,7 +110,7 @@ class Composto_qui{
     public function consultarPorCas_number($cas_number): Composto_qui|bool
     {
         $cx = $this->cx();
-        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE compost_qui.cas_number = :cas_number");
+        $stmt = $cx->prepare("SELECT * FROM composto_qui WHERE cas_number = :cas_number");
         try {
             $stmt->bindParam('cas_number', $cas_number);          
             if($stmt->execute()){
@@ -137,13 +124,17 @@ class Composto_qui{
         }
     }
 
-    public function deletar():bool
+    public function deletar($id):bool
     {
         $cx = $this->cx();
-        $stmt = $cx->prepare("DELETE FROM composto_qui WHERE compost_qui.id = :id");
+        $stmt = $cx->prepare("DELETE FROM composto_qui WHERE id = :id");
         try {
-            $stmt->bindParam('id', $this->id);
-            return $stmt->execute();
+            $stmt->bindParam('id', $id);
+            $stmt->execute();
+            if($stmt->rowCount()>0){
+                return true;
+            }
+            return false;
         } catch (\PDOException $e) {
             $this->erro = 'Erro ao deletar composto: '. $e->getMessage();
             return false;
@@ -153,7 +144,7 @@ class Composto_qui{
     public function alterar():Composto_qui|bool
     {
         $cx = $this->cx();
-        $stmt = $cx->prepare("UPDATE composto_qui SET nome = :nome, formula = :formula, cas_number = :cas_number, densidade = :densidade, fusao = :fusao, ebulicao = :ebulicao, massa_molar = :massa_molar, estrutura_molecular = :estrutura_molecular, classificacao = :classificacao, descricao = :descricao WHERE compost_qui.id = :id");
+        $stmt = $cx->prepare("UPDATE composto_qui SET nome = :nome, formula = :formula, cas_number = :cas_number, densidade = :densidade, fusao = :fusao, ebulicao = :ebulicao, massa_molar = :massa_molar, estrutura_molecular = :estrutura_molecular, classificacao = :classificacao, descricao = :descricao WHERE id = :id");
         $dados = [
             'id'=>$this->id,
             'nome'=>$this->nome,
@@ -168,11 +159,42 @@ class Composto_qui{
             'descricao'=>$this->descricao
         ];
         try {
-            return $stmt->execute($dados);
+            $stmt->execute($dados);
+            if($stmt->rowCount()>0){
+                return $this->consultarPorId($this->id);
+            }
+            return false;
         } catch (\PDOException $e) {
             $this->erro = 'Erro ao alterar composto: '. $e->getMessage();
             return false;
         }
     }
+
+    public function alteracao_seletiva($id, array $dados):Composto_qui|bool
+    {
+        $cx = $this->cx();      
+        $cmd = 'UPDATE composto_qui SET';
+        $valores[':id'] = $id;
+        foreach ($dados as $key => $value) {
+            $cmd .= " $key = :$key,";
+            $valores[":$key"] = $value;
+        }
+        $cmd = substr($cmd, 0, -1);
+        $cmd .= " WHERE id = :id";
+        $stmt = $cx->prepare($cmd);
+        
+        try {
+            $stmt->execute($valores);
+            if($stmt->rowCount()>0){
+                return $this->consultarPorId($id);
+            }
+            return false;
+        } catch (\PDOException $e) {
+            $this->erro = 'Erro ao alterar composto: '. $e->getMessage();
+            return false;
+        }
+    }
+
+
 
 }

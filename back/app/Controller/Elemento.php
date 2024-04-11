@@ -17,8 +17,17 @@ class Elemento{
     }
 
     public function listarTodos(Request $req, Response $res, $args) {   
+        $search = $req->getQueryParams();
         $objElemento = $this->m_Elemento();
-        $elementos = $objElemento->consultarTodos();        
+        if(count($search) == 0){
+            $elementos = $objElemento->consultarTodos(); 
+        }
+        elseif(isset($search['nome'])){
+            $elementos = $objElemento->consultarTodos($search['nome']);
+        }
+        elseif(isset($search['simbolo'])){
+            $elementos = $objElemento->consultarSimbolo($search['simbolo']);
+        }       
         return $this->v_Elemento()->res_get($res ,$elementos,$objElemento->getErro());
     }
     public function listarPorId(Request $req, Response $res, $args) {   
@@ -26,18 +35,5 @@ class Elemento{
         $objElemento = $this->m_Elemento();
         $elemento = $objElemento->consultarPorId($id);
         return $this->v_Elemento()->res_get($res ,$elemento,$objElemento->getErro());
-    }
-    public function listarPor(Request $req, Response $res, $args) {   
-        $objElemento = $this->m_Elemento();
-        $tipo = $args['por'];
-        if($tipo == 'simb'){
-            $simb = $req->getQueryParams()['q'];
-            $result = $objElemento->consultarSimbolo($simb);
-        }
-        elseif($tipo == 'nome'){
-            $nome = $req->getQueryParams()['q'];
-            $result = $objElemento->consultarTodos($nome);
-        } 
-        return $this->v_Elemento()->res_get($res ,$result, $objElemento->getErro());
-    }
+    }   
 }
