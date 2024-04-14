@@ -15,25 +15,20 @@ class CompostoElemento {
         return new View_CompostoElemento();
     }
 
-    // public function consultarCompostoPorElemento(Request $req, Response $res, $args) {
-    //     $objCompostoElemento = $this->m_CompostoElemento();
-    //     $search = $req->getQueryParams();
-
-    //     if(isset($search['nome'])){
-    //         $compostos = $objCompostoElemento->consultarCompostoPorElemento();
-    //     }
-    //     elseif(isset($search['formula'])){
-    //         $compostos = $objCompostoElemento->consultarPorFormula($search['formula']);
-    //     }
-    //     elseif(isset($search['cas_number'])){
-    //         $compostos = $objCompostoElemento->consultarPorCas_number($search['cas_number']);
-    //     }
-    //     else{
-    //         $objCompostoElemento->setErro("string query {".array_keys($search)[0]."} inválida");
-    //         $compostos = false;
-    //     }
-    //     return $this->v_Composto_qui()->res_get($res, $compostos, $objCompostoElemento->getErro());
-    // }
+    public function listar(Request $req, Response $res, $args) {
+        $objCompostoElemento = $this->m_CompostoElemento();
+        $search = $req->getQueryParams();
+        // /composto_elemento?elementos=[1,2,3,4]
+        if(isset($search['elementos'])){
+            $elementos = explode(',',$search['elementos']);
+            $dado = $objCompostoElemento->consultarCompostosPorElementos($elementos);
+        }
+        else{
+            $objCompostoElemento->setErro("string query {".array_keys($search)[0]."} inválida");
+            $dado = false;
+        }
+        return $this->v_CompostoElemento()->res_get($res, $dado, $objCompostoElemento->getErro());
+    }
 
     public function listarPorElemento(Request $req, Response $res, $args) {
         // Implemente a lógica para listar compostos que possuem um elemento
