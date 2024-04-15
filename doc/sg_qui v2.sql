@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Tempo de geração: 04/04/2024 às 14:55
+-- Tempo de geração: 14/04/2024 às 19:47
 -- Versão do servidor: 8.0.30
 -- Versão do PHP: 8.3.4
 
@@ -20,6 +20,14 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `sg_qui`
 --
+
+DELIMITER $$
+--
+-- Funções
+--
+CREATE DEFINER=`root`@`localhost` FUNCTION `getIdElementoBySimb` (`simbolo` VARCHAR(5)) RETURNS TINYINT UNSIGNED NO SQL RETURN (SELECT elemento.id FROM elemento WHERE elemento.simbolo = simbolo)$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -41,6 +49,42 @@ CREATE TABLE `cliente` (
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `composto_elemento`
+--
+
+CREATE TABLE `composto_elemento` (
+  `composto` int UNSIGNED NOT NULL,
+  `elemento` tinyint UNSIGNED NOT NULL,
+  `quant` int UNSIGNED DEFAULT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `composto_elemento`
+--
+
+INSERT INTO `composto_elemento` (`composto`, `elemento`, `quant`, `createdAt`, `updatedAt`) VALUES
+(30, 1, 20, '2024-04-11 20:23:40', '2024-04-14 16:37:23'),
+(30, 6, 17, '2024-04-11 20:23:40', '2024-04-11 20:23:40'),
+(30, 7, 1, '2024-04-11 20:23:40', '2024-04-11 20:23:40'),
+(30, 8, 2, '2024-04-11 20:23:40', '2024-04-11 20:23:40'),
+(30, 26, 3, '2024-04-11 20:23:40', '2024-04-11 20:23:40'),
+(31, 1, 27, '2024-04-11 20:26:12', '2024-04-11 20:26:12'),
+(31, 6, 17, '2024-04-11 20:26:12', '2024-04-11 20:26:12'),
+(31, 7, 1, '2024-04-11 20:26:12', '2024-04-11 20:26:12'),
+(31, 8, 2, '2024-04-11 20:26:12', '2024-04-11 20:26:12'),
+(32, 1, 2, '2024-04-12 14:43:35', '2024-04-12 14:43:35'),
+(32, 8, 1, '2024-04-12 14:43:35', '2024-04-12 14:43:35'),
+(32, 26, 3, '2024-04-12 14:43:35', '2024-04-12 14:43:35'),
+(35, 1, 2, '2024-04-14 12:48:59', '2024-04-14 12:48:59'),
+(35, 6, 1, '2024-04-14 12:48:59', '2024-04-14 12:48:59'),
+(35, 8, 3, '2024-04-14 12:48:59', '2024-04-14 12:48:59'),
+(35, 10, 4, '2024-04-14 12:48:59', '2024-04-14 12:48:59');
 
 -- --------------------------------------------------------
 
@@ -69,7 +113,13 @@ CREATE TABLE `composto_qui` (
 --
 
 INSERT INTO `composto_qui` (`id`, `nome`, `formula`, `cas_number`, `densidade`, `fusao`, `ebulicao`, `massa_molar`, `estrutura_molecular`, `classificacao`, `descricao`, `createdAt`, `updatedAt`) VALUES
-(1, 'Pentóxido de Fósforo', 'P2O5', '1314-56-3', 2.3900, 340.4000, 360.1000, 141.9400, ' P(=O)OP(=O)O', 'Óxido', 'O pentóxido de fósforo é um composto químico sólido branco, altamente higroscópico e solúvel em água, formando ácido fosfórico. É utilizado principalmente como agente desidratante e agente de condensação em síntese orgânica. Também é um constituinte importante de fertilizantes e outros produtos químicos.', '2024-04-01 18:41:42', '2024-04-01 18:41:42');
+(1, 'Pentóxido de Fósforo', 'P2O5', '1314-56-3', 2.3900, 340.4000, 360.1000, 141.9400, ' P(=O)OP(=O)O', 'Óxido', 'O pentóxido de fósforo é um composto químico sólido branco, altamente higroscópico e solúvel em água, formando ácido fosfórico. É utilizado principalmente como agente desidratante e agente de condensação em síntese orgânica. Também é um constituinte importante de fertilizantes e outros produtos químicos.', '2024-04-01 18:41:42', '2024-04-01 18:41:42'),
+(15, '15', '16', '15', 16.0000, 19.0000, 17.0000, 15.0000, '15', '15', '15', '2024-04-10 20:11:43', '2024-04-10 23:39:32'),
+(30, '4', 'C17H27NO2Fe3', '2', 2.0000, 2.0000, 2.0000, 2.0000, '2', '2', '2', '2024-04-11 20:23:40', '2024-04-11 20:23:40'),
+(31, '3', 'C17H27NO2', '24', 2.0000, 2.0000, 2.0000, 2.0000, '2', '2', '2', '2024-04-11 20:26:12', '2024-04-11 20:26:12'),
+(32, '36', 'H2O1Fe3', '246', 2.0000, 2.0000, 2.0000, 2.0000, '2', '2', '2', '2024-04-12 14:43:35', '2024-04-12 14:43:35'),
+(33, 'Ácido metanoico Tec', 'CH2O3Ne3', '24644', 2.0000, 2.0000, 2.0000, 2.0000, '2', '2', '2', '2024-04-14 12:47:31', '2024-04-14 12:47:31'),
+(35, 'Ácido metanoico Tec2', 'CH2O3Ne4', '246442', 2.0000, 2.0000, 2.0000, 2.0000, '2', '2', '2', '2024-04-14 12:48:59', '2024-04-14 12:48:59');
 
 -- --------------------------------------------------------
 
@@ -264,20 +314,6 @@ CREATE TABLE `materia_prima` (
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `possui`
---
-
-CREATE TABLE `possui` (
-  `composto` int UNSIGNED NOT NULL,
-  `elemento` tinyint UNSIGNED NOT NULL,
-  `quant` int UNSIGNED DEFAULT NULL,
-  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
 -- Estrutura para tabela `projeto`
 --
 
@@ -348,11 +384,22 @@ ALTER TABLE `cliente`
   ADD UNIQUE KEY `cnpj_cpf` (`cnpj_cpf`);
 
 --
+-- Índices de tabela `composto_elemento`
+--
+ALTER TABLE `composto_elemento`
+  ADD PRIMARY KEY (`composto`,`elemento`),
+  ADD KEY `elemento` (`elemento`),
+  ADD KEY `elemento_2` (`elemento`),
+  ADD KEY `composto` (`composto`,`elemento`),
+  ADD KEY `composto_2` (`composto`,`elemento`);
+
+--
 -- Índices de tabela `composto_qui`
 --
 ALTER TABLE `composto_qui`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nome` (`nome`);
+  ADD UNIQUE KEY `nome` (`nome`),
+  ADD UNIQUE KEY `formula` (`formula`,`cas_number`);
 
 --
 -- Índices de tabela `elemento`
@@ -376,13 +423,6 @@ ALTER TABLE `garantia`
 ALTER TABLE `materia_prima`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nome` (`nome`);
-
---
--- Índices de tabela `possui`
---
-ALTER TABLE `possui`
-  ADD PRIMARY KEY (`composto`,`elemento`),
-  ADD KEY `FK_Possui_2` (`elemento`);
 
 --
 -- Índices de tabela `projeto`
@@ -419,7 +459,7 @@ ALTER TABLE `cliente`
 -- AUTO_INCREMENT de tabela `composto_qui`
 --
 ALTER TABLE `composto_qui`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de tabela `elemento`
@@ -462,18 +502,18 @@ ALTER TABLE `usuario`
 --
 
 --
+-- Restrições para tabelas `composto_elemento`
+--
+ALTER TABLE `composto_elemento`
+  ADD CONSTRAINT `composto_elemento_ibfk_1` FOREIGN KEY (`elemento`) REFERENCES `elemento` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `composto_elemento_ibfk_2` FOREIGN KEY (`composto`) REFERENCES `composto_qui` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Restrições para tabelas `garantia`
 --
 ALTER TABLE `garantia`
   ADD CONSTRAINT `FK_Garantia_2` FOREIGN KEY (`fk_Materia_prima_id`) REFERENCES `materia_prima` (`id`),
   ADD CONSTRAINT `FK_Garantia_3` FOREIGN KEY (`fk_Composto_QUI_id`) REFERENCES `composto_qui` (`id`);
-
---
--- Restrições para tabelas `possui`
---
-ALTER TABLE `possui`
-  ADD CONSTRAINT `FK_Possui_1` FOREIGN KEY (`composto`) REFERENCES `composto_qui` (`id`),
-  ADD CONSTRAINT `FK_Possui_2` FOREIGN KEY (`elemento`) REFERENCES `elemento` (`id`);
 
 --
 -- Restrições para tabelas `projeto_materia_p`
