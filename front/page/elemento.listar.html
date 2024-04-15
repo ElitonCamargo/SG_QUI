@@ -1,166 +1,216 @@
+<h2>Tabela de Elementos Químicos</h2>
 
-    <h2>Tabela de Elementos Químicos</h2>
-    <table id="tabela-elementos" class="table table-striped">
-        <thead>
-            <tr>
-                <th>Símbolo</th>
-                <th>Nome</th>
-                <th>Número Atômico</th>
-                <th>Massa Atômica</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Os elementos serão preenchidos aqui dinamicamente -->
-        </tbody>
-    </table>
+<table id="tabela-elementos" class="table table-striped">
+  <thead>
+    <tr class="align-middle">
+      <th>id</th>
+      <th>Símbolo</th>
+      <th>Nome</th>
+      <th>Número Atômico</th>
+      <th>Massa Atômica</th>
+      <th>Detalhes</th>
+      <th>Excluir</th>
+    </tr>
+  </thead>
+</table>
 
 
-      
-      <!-- Modal -->
-      <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="modalDetalhesLabel">Detalhes do Elemento Químico</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary btn-sm" id="btnLiberarEdicao"><i style="font-size: 1.2rem;" class="bi bi-pencil-square"></i></button>
-            </div>
-            <div class="modal-body">
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <input type="text" class="form-control" id="modal-id" style="display: none;">
-                      <label for="modal-nome" class="form-label">Nome:</label>
-                      <input type="text" class="form-control" id="modal-nome" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-simbolo" class="form-label">Símbolo:</label>
-                      <input type="text" class="form-control" id="modal-simbolo" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-numero-atomico" class="form-label">Número Atômico:</label>
-                      <input type="number" class="form-control" id="modal-numero-atomico" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-massa-atomica" class="form-label">Massa Atômica:</label>
-                      <input type="number" class="form-control" id="modal-massa-atomica" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-grupo" class="form-label">Grupo:</label>
-                      <input type="number" class="form-control" id="modal-grupo" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-periodo" class="form-label">Período:</label>
-                      <input type="number" class="form-control" id="modal-periodo" disabled>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="modal-ponto-de-fusao" class="form-label">Ponto de Fusão (°C):</label>
-                      <input type="number" class="form-control" id="modal-ponto-de-fusao" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-ponto-de-ebulicao" class="form-label">Ponto de Ebulição (°C):</label>
-                      <input type="number" class="form-control" id="modal-ponto-de-ebulicao" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-densidade" class="form-label">Densidade (g/cm³):</label>
-                      <input type="number" class="form-control" id="modal-densidade" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-estado-padrao" class="form-label">Estado Padrão:</label>
-                      <input type="text" class="form-control" id="modal-estado-padrao" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-configuracao-eletronica" class="form-label">Configuração Eletrônica:</label>
-                      <input type="text" class="form-control" id="modal-configuracao-eletronica" disabled>
-                    </div>
-                    <div class="mb-3">
-                      <label for="modal-propriedades" class="form-label">Propriedades:</label>
-                      <textarea class="form-control" id="modal-propriedades" rows="3" disabled></textarea>
-                    </div>
-                  </div>
-                </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalDetalhesLabel">Detalhes do Elemento Químico</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" id="btnLiberarEdicao"><i style="font-size: 1.2rem;"
+            class="bi bi-pencil-square"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <input type="text" class="form-control" id="modal-id" style="display: none;">
+                <label for="modal-nome" class="form-label">Nome:</label>
+                <input type="text" class="form-control" id="modal-nome" disabled>
               </div>
-            </div>            
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+              <div class="mb-3">
+                <label for="modal-simbolo" class="form-label">Símbolo:</label>
+                <input type="text" class="form-control" id="modal-simbolo" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-numero-atomico" class="form-label">Número Atômico:</label>
+                <input type="number" class="form-control" id="modal-numero-atomico" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-massa-atomica" class="form-label">Massa Atômica:</label>
+                <input type="number" class="form-control" id="modal-massa-atomica" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-grupo" class="form-label">Grupo:</label>
+                <input type="number" class="form-control" id="modal-grupo" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-periodo" class="form-label">Período:</label>
+                <input type="number" class="form-control" id="modal-periodo" disabled>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="modal-ponto-de-fusao" class="form-label">Ponto de Fusão (°C):</label>
+                <input type="number" class="form-control" id="modal-ponto-de-fusao" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-ponto-de-ebulicao" class="form-label">Ponto de Ebulição (°C):</label>
+                <input type="number" class="form-control" id="modal-ponto-de-ebulicao" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-densidade" class="form-label">Densidade (g/cm³):</label>
+                <input type="number" class="form-control" id="modal-densidade" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-estado-padrao" class="form-label">Estado Padrão:</label>
+                <input type="text" class="form-control" id="modal-estado-padrao" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-configuracao-eletronica" class="form-label">Configuração Eletrônica:</label>
+                <input type="text" class="form-control" id="modal-configuracao-eletronica" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="modal-propriedades" class="form-label">Propriedades:</label>
+                <textarea class="form-control" id="modal-propriedades" rows="3" disabled></textarea>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
-    
-    $('#btnLiberarEdicao').on('click',()=>{
-        // Habilitar ou desabilitar os inputs com base no estado atual
-        let inputs = $('#modalDetalhes input, #modalDetalhes textarea');
-        let disabled = inputs.prop('disabled');          
-        inputs.prop('disabled', !disabled);
+  $('#btnLiberarEdicao').on('click', () => {
+    // Habilitar ou desabilitar os inputs com base no estado atual
+    let inputs = $('#modalDetalhes input, #modalDetalhes textarea');
+    let disabled = inputs.prop('disabled');
+    inputs.prop('disabled', !disabled);
 
-        // Alterar o estilo do botão de liberação de edição
-        console.log(this);
-        if (disabled) {
-          $('#btnLiberarEdicao').removeClass('btn-secondary').addClass('btn-success');
-        } else {
-          $('#btnLiberarEdicao').removeClass('btn-success').addClass('btn-secondary');
-        }
+    // Alterar o estilo do botão de liberação de edição
+    console.log(this);
+    if (disabled) {
+      $('#btnLiberarEdicao').removeClass('btn-secondary').addClass('btn-success');
+    } else {
+      $('#btnLiberarEdicao').removeClass('btn-success').addClass('btn-secondary');
+    }
+  });
+
+  $(function () {
+
+    //adiciona inputs para busca na coluna
+    $('#tabela-elementos thead th').each(function (i) {
+
+      let title = $('#tabela-elementos thead th')
+        .eq($(this).index())
+        .text();
+
+      //array que exclui inserção de inputs
+      let arrInputNone = ["Detalhes", "Excluir"];
+
+      if (arrInputNone.indexOf(title) === -1) {
+        $(this).html(
+          `<div class="input-group">
+                <input class="form-control" type="text" placeholder="${title}" data-index="${i}">
+            </div>
+        `
+
+        );
+      }
+
     });
 
-    $(document).ready(function() {
-        const addLinha = (id,simbolo,nome,numero_atomico,massa_atomica) => {
-            return `
-                <tr>
-                    <td>${simbolo}</td>
-                    <td>${nome}</td>
-                    <td>${numero_atomico}</td>
-                    <td>${massa_atomica}</td>
-                    <td>
-                        <button type="button" class="btn btn-primary btn-sm" onclick="detalhesElemento('${id}')"><i style="font-size: 1.2rem;" class="bi bi-binoculars-fill"></i></button>
-                        <button type="button" class="btn btn-danger btn-sm"><i style="font-size: 1.2rem;" class="bi bi-trash"></i></button>
-                    </td>
-                </tr>                
-            `;
-        };
+    //inicia datatable
+    let table = $('#tabela-elementos').DataTable({
+      ajax: {
+        url: "../back/elemento",
+        dataSrc: "sucess.dados",
+        cache: true
+      },
+      order: [[1, 'asc']],
+      scrollY: '300px',
+      scrollX: false,
+      scrollCollapse: false,
+      paging: false,
+      fixedColumns: false,
+      columns: [
+        { data: 'id', target: 0, visible: false },
+        { data: 'simbolo', target: 1 },
+        { data: 'nome', target: 2 },
+        { data: 'numero_atomico', target: 3, className: 'text-center' },
+        { data: 'massa_atomica', target: 4, className: 'text-center' },
+        {
+          "targets": 5,
+          "data": null,
+          className: "text-center", "orderable": false
+        }, {
+          "targets": 6,
+          "data": null,
+          "defaultContent": '<button type="button" class="btn btn-danger btn-sm"><i style="font-size: 1.2rem;" class="bi bi-trash"></i></button>',
+          className: "text-center", "orderable": false
+        },
+      ],
+      "columnDefs": [
+        {
+          render: function (data, type, row) {
+            return `<button type="button" class="btn btn-primary btn-sm" onclick="detalhesElemento('${ data['id'] }')"><i style="font-size: 1.2rem;" class="bi bi-binoculars-fill"></i></button>`;
+          },"targets": 5
+        }
+      ]
+    });
 
-        req_GET("http://localhost:3000/elemento").then(data => {
-            const tabela = $('#tabela-elementos tbody');
-            data.forEach(elemento => {
-                    tabela.append(addLinha(elemento.id,elemento.simbolo,elemento.nome,elemento.numero_atomico,elemento.massa_atomica));
-                }
-            );            
-        })
-        .catch(error => {
-            console.error('Erro ao fazer solicitação GET:', error);
-        });
+    // ajusta as colunas
+    table.columns.adjust().draw();
+
+    // Busca em coluna
+    $(table.table().container()).on('keyup', 'thead input', function () {
+      table
+        .column($(this).data('index'))
+        .search(this.value)
+        .draw();
+    });
+
   });
 
 
-  const detalhesElemento = (elemento)=>{
-      req_GET(`http://localhost:3000/elemento/${elemento}`).then(data => {
-            $('#modal-id').val(data.id);
-            $('#modal-nome').val(data.nome);
-            $('#modal-simbolo').val(data.simbolo);
-            $('#modal-numero-atomico').val(data.numero_atomico);
-            $('#modal-massa-atomica').val(data.massa_atomica);
-            $('#modal-grupo').val(data.grupo);
-            $('#modal-periodo').val(data.periodo);
-            $('#modal-ponto-de-fusao').val(data.ponto_de_fusao);
-            $('#modal-ponto-de-ebulicao').val(data.ponto_de_ebulicao);
-            $('#modal-densidade').val(data.densidade);
-            $('#modal-estado-padrao').val(data.estado_padrao);
-            $('#modal-configuracao-eletronica').val(data.configuracao_eletronica);
-            $('#modal-propriedades').val(data.propriedades);
+  const detalhesElemento = (elemento) => {
+    req_GET(`../back/elemento/${elemento}`).then(data => {
+      data = data.sucess.dados;
+      $('#modal-id').val(data.id);
+      $('#modal-nome').val(data.nome);
+      $('#modal-simbolo').val(data.simbolo);
+      $('#modal-numero-atomico').val(data.numero_atomico);
+      $('#modal-massa-atomica').val(data.massa_atomica);
+      $('#modal-grupo').val(data.grupo);
+      $('#modal-periodo').val(data.periodo);
+      $('#modal-ponto-de-fusao').val(data.ponto_de_fusao);
+      $('#modal-ponto-de-ebulicao').val(data.ponto_de_ebulicao);
+      $('#modal-densidade').val(data.densidade);
+      $('#modal-estado-padrao').val(data.estado_padrao);
+      $('#modal-configuracao-eletronica').val(data.configuracao_eletronica);
+      $('#modal-propriedades').val(data.propriedades);
 
-            // Exibir o modal
-            $('#modalDetalhes').modal('show');
-      })
+      // Exibir o modal
+      $('#modalDetalhes').modal('show');
+    })
       .catch(error => {
-          console.error('Erro ao fazer solicitação GET:', error);
+        console.error('Erro ao fazer solicitação GET:', error);
       });
   }
+
 </script>

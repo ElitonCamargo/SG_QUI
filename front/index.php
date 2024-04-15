@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema Gerenciador de Projetos de Química</title>
   <!-- Bootstrap CSS -->
-  <link href="/front/css/bootstrap.min.css"       rel="stylesheet">
+  <link href="/front/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/front/script/vendor/DataTables/datatables.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
   <style>
     #root {
       overflow-y: auto;
@@ -92,6 +92,8 @@
 <!-- Bootstrap JS (opcional, dependendo dos recursos que você usa) -->
 <script src="/front/script/bootstrap.bundle.min.js"></script>
 <script src="/front/script/jquery-3.7.1.min.js"></script>
+<script src="/front/script/vendor/DataTables/datatables.min.js"></script>
+<script src="/front/script/datatables.custom.js"></script>
 <script src="/front/script/recursos.js"></script>
 <script src="/front/script/roteamento.js"></script>
 <script>
