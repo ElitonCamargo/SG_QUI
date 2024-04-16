@@ -14,16 +14,16 @@ $app = AppFactory::create();
 $app->setBasePath('/back'); // Define o caminho base do aplicativo
 
 
-// $app->add(function (Request $request, $handler) { // Define o middleware para transformar a resposta em JSON
-//     $response = $handler->handle($request);
-//     return $response->withHeader('Content-Type', 'application/json');
-// });
+$app->add(function (Request $request, $handler) { // Define o middleware para transformar a resposta em JSON
+    $response = $handler->handle($request);
+    return $response->withHeader('Content-Type', 'application/json');
+});
 
-// require_once 'App/Components/Elemento.php';
-// require_once 'App/Components/CompostoElemento.php';
-// require_once 'App/Components/Composto_qui.php';
-// require_once 'App/Components/MateriaPrima.php';
+require_once 'app/Components/Elemento.php';
+require_once 'app/Components/CompostoElemento.php';
+require_once 'app/Components/Composto_qui.php';
+require_once 'app/Components/MateriaPrima.php';
 
-// require_once 'App/helpers/rota_nao_encontrada.php';
-//$app->run();
+require_once 'app/helpers/rota_nao_encontrada.php';
+$app->run();
 
