@@ -1,6 +1,6 @@
 <?php
-// use Psr\Http\Message\ServerRequestInterface as Request;
-// use Slim\Factory\AppFactory;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Factory\AppFactory;
 
 
 // require __DIR__ . '/vendor/autoload.php';
@@ -21,8 +21,6 @@
 // require_once 'App/Components/Composto_qui.php';
 // require_once 'App/Components/MateriaPrima.php';
 
-// require_once 'App/helpers/rota_nao_encontrada.php';
+require_once 'App/helpers/rota_nao_encontrada.php';
 
-// $app->run();
-
-echo 'ok';
+$app->run();
