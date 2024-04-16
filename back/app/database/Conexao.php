@@ -9,12 +9,19 @@ class Conexao{
     private $senha;
 
     public function __construct(){
-        $this->servidor = 'localhost';
-        $this->baseDeDados = 'sg_qui';
-        $this->usuario = 'root';
-        $this->senha = '';
+        $this->servidor = '108.167.151.37';
+        $this->baseDeDados = 'drawbe66_sgqui';
+        $this->usuario = 'drawbe66_sgqui';
+        $this->senha = 'Sg_Qui123';
     }
+    // public function __construct(){
+    //     $this->servidor = 'localhost';
+    //     $this->baseDeDados = 'sg_qui';
+    //     $this->usuario = 'root';
+    //     $this->senha = '';
+    // }
     public function getConexao(){
         return new PDO("mysql:host=$this->servidor;dbname=$this->baseDeDados", $this->usuario, $this->senha);
     }
+
 }

@@ -17,8 +17,9 @@ $app->add(function (Request $request, $handler) { // Define o middleware para tr
 });
 
 require_once 'app/Components/Elemento.php';
-require_once 'app/Components/Composto_qui.php';
 require_once 'app/Components/CompostoElemento.php';
+require_once 'app/Components/Composto_qui.php';
+require_once 'app/Components/MateriaPrima.php';
 
 require_once 'app/helpers/rota_nao_encontrada.php';
 
