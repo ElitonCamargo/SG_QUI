@@ -1,18 +1,17 @@
 <?php
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 
 require __DIR__ . '/vendor/autoload.php';
-// require_once 'App/helpers/funcoes.php';
-// require_once 'App/helpers/autoload.php';
-include 'ffff.php';
-// $app = AppFactory::create();
-// $app->setBasePath('/back'); // Define o caminho base do aplicativo
+require_once 'App/helpers/funcoes.php';
+require_once 'App/helpers/autoload.php';
+$app = AppFactory::create();
+$app->setBasePath('/back'); // Define o caminho base do aplicativo
 
 
 // $app->add(function (Request $request, $handler) { // Define o middleware para transformar a resposta em JSON
