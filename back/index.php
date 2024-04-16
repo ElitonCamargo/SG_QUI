@@ -8,8 +8,8 @@ use Slim\Factory\AppFactory;
 
 
 require __DIR__ . '/vendor/autoload.php';
-require_once 'App/helpers/funcoes.php';
-require_once 'App/helpers/autoload.php';
+require_once './App/helpers/funcoes.php';
+require_once './App/helpers/autoload.php';
 $app = AppFactory::create();
 $app->setBasePath('/back'); // Define o caminho base do aplicativo
 
