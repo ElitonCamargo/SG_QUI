@@ -1,7 +1,7 @@
 <?php
 namespace App\Model;
 
-use App\database\Conexao;
+use app\database\Conexao;
 use PDO;
 
 class Usuario{

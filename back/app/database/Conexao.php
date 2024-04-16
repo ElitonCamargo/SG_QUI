@@ -1,5 +1,5 @@
 <?php
-namespace App\database;
+namespace app\database;
 use PDO;
 
 class Conexao{
