@@ -22,5 +22,5 @@ $app->add(function (Request $request, $handler) { // Define o middleware para tr
 // require_once 'App/Components/MateriaPrima.php';
 
 require_once 'App/helpers/rota_nao_encontrada.php';
-
+echo 'fff';
 $app->run();
