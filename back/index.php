@@ -6,11 +6,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once 'app/database/Conexao.php';
 
-$cx = new Conexao();
 
-var_dump($cx);
 
 // use Psr\Http\Message\ServerRequestInterface as Request;
 // use Slim\Factory\AppFactory;
@@ -18,7 +15,12 @@ var_dump($cx);
 
 // require __DIR__ . '/vendor/autoload.php';
 // require_once 'app/helpers/funcoes.php';
-// require_once 'app/helpers/autoload.php';
+require_once 'app/helpers/autoload.php';
+
+$cx = new Conexao();
+
+var_dump($cx);
+
 // $app = AppFactory::create();
 // $app->setBasePath('/back'); // Define o caminho base do aplicativo
 
