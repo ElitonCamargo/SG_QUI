@@ -14,14 +14,15 @@ class Conexao{
         $this->usuario = 'drawbe66_sgqui';
         $this->senha = 'Sg_Qui123';
     }
+    public function getConexao(){
+        return new PDO("mysql:host=$this->servidor;dbname=$this->baseDeDados", $this->usuario, $this->senha);
+    }
+
+}
+
     // public function __construct(){
     //     $this->servidor = 'localhost';
     //     $this->baseDeDados = 'sg_qui';
     //     $this->usuario = 'root';
     //     $this->senha = '';
     // }
-    public function getConexao(){
-        return new PDO("mysql:host=$this->servidor;dbname=$this->baseDeDados", $this->usuario, $this->senha);
-    }
-
-}

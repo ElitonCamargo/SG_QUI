@@ -15,8 +15,7 @@ error_reporting(E_ALL);
 
 // require __DIR__ . '/vendor/autoload.php';
 // require_once 'app/helpers/funcoes.php';
-//require_once 'app/helpers/autoload.php';
-require_once 'app/database/Conexao.php';
+require_once 'app/helpers/autoload.php';
 
 $cx = new Conexao();
 
