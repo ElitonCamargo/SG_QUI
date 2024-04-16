@@ -4,8 +4,8 @@ use Slim\Factory\AppFactory;
 
 
 require __DIR__ . '/vendor/autoload.php';
-require_once 'app/helpers/funcoes.php';
-require_once 'app/helpers/autoload.php';
+require_once 'App/helpers/funcoes.php';
+require_once 'App/helpers/autoload.php';
 
 $app = AppFactory::create();
 $app->setBasePath('/back'); // Define o caminho base do aplicativo
@@ -16,11 +16,11 @@ $app->add(function (Request $request, $handler) { // Define o middleware para tr
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-require_once 'app/Components/Elemento.php';
-require_once 'app/Components/CompostoElemento.php';
-require_once 'app/Components/Composto_qui.php';
-require_once 'app/Components/MateriaPrima.php';
+require_once 'App/Components/Elemento.php';
+require_once 'App/Components/CompostoElemento.php';
+require_once 'App/Components/Composto_qui.php';
+require_once 'App/Components/MateriaPrima.php';
 
-require_once 'app/helpers/rota_nao_encontrada.php';
+require_once 'App/helpers/rota_nao_encontrada.php';
 
 $app->run();
