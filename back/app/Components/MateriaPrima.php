@@ -227,6 +227,20 @@ use PDO;
             return MateriaPrima_res_get($res, $materiasPrimas, $materiaPrima->getErro());
         });
 
+        $app->get('/materia_primas', function (Request $req, Response $res, $args) {
+            $materiaPrima = new MateriaPrima();
+            $search = $req->getQueryParams();
+            if (count($search) == 0) {
+                $materiasPrimas = $materiaPrima->consultarTodos();
+            } elseif (isset($search['nome'])) {
+                $materiasPrimas = $materiaPrima->consultarTodos($search['nome']);
+            } else {
+                $materiaPrima->setErro("Query string inválida");
+                $materiasPrimas = false;
+            }
+            return MateriaPrima_res_get($res, $materiasPrimas, $materiaPrima->getErro());
+        });
+
         $app->get('/materia_prima/{id}', function (Request $req, Response $res, $args) {
             $materiaPrima = new MateriaPrima();
             $materiaPrimaItem = $materiaPrima->consultarPorId($args['id']);
