@@ -1,0 +1,337 @@
+<!-- ********************************** Tabs de navegação ********************************** -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="projetos-tab" data-bs-toggle="tab" data-bs-target="#projetos-tab-pane"
+      type="button" role="tab" aria-controls="projetos-tab-pane" aria-selected="true">Projetos</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="projetoDetalhes-tab" data-bs-toggle="tab" data-bs-target="#projetoDetalhes-tab-pane" type="button"
+      role="tab" aria-controls="projetoDetalhes-tab-pane" aria-selected="false" disabled>Detalhes</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+
+<!-- ********************************** Projetos ********************************** -->
+  <div class="tab-pane fade show active" id="projetos-tab-pane" role="tabpanel" aria-labelledby="projetos-tab" tabindex="0">    
+    <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
+      Cadastrar
+      <button type="button" class="btn btn-link btn-sm" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="bi bi-plus-circle"></i></button>
+    </p>
+    <div class="collapse" id="collapseExample">
+      <form id="formCadastrarProjeto">
+        <div class="row">
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="nome" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="nome" name="nome" maxlength="50" required>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="data_inicio" class="form-label">Data de Início</label>
+              <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="data_termino" class="form-label">Data de Término</label>
+              <input type="date" class="form-control" id="data_termino" name="data_termino">
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="status" class="form-label">Status</label>
+              <select class="form-select" class="form-control" id="status" name="status" aria-label="0">
+                <option selected value="Aguardando aprovação">Aguardando aprovação</option>
+                <option value="Inicializado">Inicializado</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="descricao" class="form-label">Descrição</label>
+              <textarea class="form-control" id="descricao" name="descricao" rows="1"></textarea>
+            </div>
+          </div>        
+        </div>
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+      </form>
+    </div>
+    <hr>
+    <div class="mt-5">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <p class="fs-5">Listar</p>
+        </div>
+        <div class="col-auto">
+            <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Search">
+        </div>
+      </div>
+      <table class="table">
+          <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Data de Início</th>
+                <th>Data de Término</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+          </thead>
+          <tbody id="tabelaProjetos">
+              <!-- Linhas da tabela serão inseridas aqui dinamicamente -->
+          </tbody>
+      </table>
+    </div>
+    <script>
+      // Função para adicionar uma nova linha à tabela
+      function adicionarLinhaNaTabela(id, nome, data_inicio, data_termino, status) {
+          let newRow = $('<tr>');
+            let cols =
+            `<td>${id}</td>
+            <td>${nome}</td>
+            <td><input type="date" value="${data_inicio}" style="border-color: #ffffff08; background-color:#ffffff08;" disabled></td>
+            <td><input type="date" value="${data_termino}" style="border-color: #ffffff08; background-color:#ffffff08;" disabled></td>
+            <td>${status}</td>
+            <td>
+              <button type="button" class="btn btn-danger   btn-sm"><i style="font-size: 1.2rem;" class="bi bi-trash"></i></button>
+              <button type="button" class="btn btn-primary  btn-sm detalhesProjeto" data-id="${id}"><i style="font-size: 1.2rem;" class="bi bi-journal-bookmark-fill"></i></button>
+            </td>`;
+            newRow.append(cols);
+            $("#tabelaProjetos").append(newRow);
+      }
+            
+      $(document).ready(function() {
+        // Cadastrar projeto
+        $('#formCadastrarProjeto').submit(function(event) {
+          event.preventDefault();              
+          let nome = $("#nome").val();
+          let data_inicio = $("#data_inicio").val();
+          let data_termino = $("#data_termino").val();
+          let status = $("#status").val();
+          let descricao = $('#descricao').val();
+          
+          (async () => {
+            const objProjeto = new Parse.Object('Projeto');
+            objProjeto.set('nome', nome);
+            objProjeto.set('data_inicio', data_inicio);
+            objProjeto.set('data_termino', data_termino);
+            objProjeto.set('status', status);
+            objProjeto.set('descricao', descricao);
+            try {
+              const projeto = await objProjeto.save();
+              adicionarLinhaNaTabela(
+                projeto.id, 
+                projeto.get('nome'), 
+                projeto.get('data_inicio'), 
+                projeto.get('data_termino'), 
+                projeto.get('status')
+              );
+            } catch (error) {
+              console.error('Error while creating Projeto: ', error);
+            }
+          })();
+        });
+        // Consultar projetos já cadastrados
+        const consultarProjetos = ()=>{
+          (async () => {
+            const Projeto = Parse.Object.extend('Projeto');
+            const query = new Parse.Query(Projeto);
+            try {
+              const projetos = await query.find();
+              projetos.forEach(projeto => {
+                adicionarLinhaNaTabela(
+                  projeto.id, 
+                  projeto.get('nome'), 
+                  projeto.get('data_inicio'), 
+                  projeto.get('data_termino'), 
+                  projeto.get('status')
+                );
+              });                  
+            } catch (error) {
+              console.error('Error while fetching Projeto', error);
+            }
+          })();
+        }            
+        consultarProjetos();
+      });
+      // Ao clicar no botão de detalhes do projeto
+      $(document).on('click', '.detalhesProjeto', function() { 
+        //let linha = $(this).closest('tr');
+        //$('#nomeMateriaPrima').text(linha.find('td:eq(1)').text());  
+        //let idProjeto = $(this).data('id');
+        $('#projetoDetalhes-tab').tab('show');        
+
+      });
+    </script>
+
+  </div>
+
+<!-- ********************************** Detalhes ********************************** -->
+  <div class="tab-pane fade" id="projetoDetalhes-tab-pane" role="tabpanel" aria-labelledby="projetoDetalhes-tab" tabindex="0">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Detalhes do Projeto</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><strong>ID:</strong> iFiZ2W7LGz</li>
+              <li class="list-group-item"><strong>Nome:</strong> Projeto piloto</li>
+              <li class="list-group-item"><strong>Descrição:</strong> Projeto cadastrado para teste de visual</li>
+              <li class="list-group-item"><strong>Data de Início:</strong> 21/04/2024</li>
+              <li class="list-group-item"><strong>Data de Término:</strong> 25/05/2024</li>
+              <li class="list-group-item"><strong>Status:</strong> Aguardando aprovação</li>
+            </ul>
+          </div>
+        </div>        
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tabela de nutrientes</h5>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nutriente</th>
+                  <th>Percentual</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>N</td>
+                  <td>9%</td>
+                </tr>
+                <tr>
+                  <td>Mn</td>
+                  <td>6.2%</td>
+                </tr>
+                <tr>
+                  <td>S</td>
+                  <td>8.45%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Ordem</th>
+                    <th scope="col">Matéria Prima</th>
+                    <th scope="col">Percentual</th>
+                    <th scope="col">Tempo de Agitação</th>
+                    <th scope="col">Observação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td><i class="bi bi-arrows-move"></i> 1</td>
+                  <td>Água</td>
+                  <td>27,5%</td>
+                  <td contenteditable="true">0</td>
+                  <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                  <td><i class="bi bi-arrows-move"></i> 2</td>
+                  <td>Ureia</td>
+                  <td>10%</td>
+                  <td contenteditable="true">0</td>
+                  <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                  <td><i class="bi bi-arrows-move"></i> 3</td>
+                  <td>Sulfato de Manganês</td>
+                  <td>20%</td>
+                  <td contenteditable="true">0</td>
+                  <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                  <td><i class="bi bi-arrows-move"></i> 4</td>
+                  <td>Sulfato de Amônia</td>
+                  <td>22,5%</td>
+                  <td contenteditable="true">0</td>
+                  <td contenteditable="true"></td>
+                </tr>
+                <tr>                  
+                    <td scope="col" colspan="5">
+                      <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-plus-circle"></i></button>
+                    </td>
+                </tr>
+                <tr>                  
+                  <th scope="col" colspan="2">Total</th>
+                  <th scope="col">80%</th>
+                  <th scope="col">0</th>
+                  <th scope="col"></th>
+              </tr>
+            </tbody>
+        </table>
+        <div class="progress">
+          <div class="progress-bar bg-primary" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
+          <div class="progress-bar bg-secondary" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Meu Modal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulário -->
+        <form>
+          <div class="row">
+            <div class="col-5 mb-3">
+              <label for="percentual" class="form-label">Percentual</label>
+              <input type="text" class="form-control" id="percentual" value="4,5" placeholder="Digite o percentual">
+            </div>
+            <div class="col-5 mb-3">
+              <label for="nutriente" class="form-label">Nutriente</label>
+              <input type="text" class="form-control" id="nutriente" value="N" placeholder="Digite o nutriente">
+            </div>
+            <div class="col-2 mb-3">
+              <label for="nutriente" class="form-label" style="color: rgba(240, 248, 255, 0);">Ação</label>
+              <button type="submit" class="btn btn-primary form-control"><i class="bi bi-search"></i></button>
+            </div>
+          </div>
+          
+        </form>
+        <!-- Tabela -->
+        <table class="table mt-3">
+          <thead>
+            <tr>
+              <th>Matéria Prima</th>
+              <th>Percentual</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ureia</td>
+              <td>10%</td>
+              <td><button type="button" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add</button></td>
+            </tr>
+            <tr>
+              <td>Uram</td>
+              <td>14%</td>
+              <td><button type="button" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

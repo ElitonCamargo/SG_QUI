@@ -1,0 +1,121 @@
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="nutriente-tab" data-bs-toggle="tab" data-bs-target="#nutriente-tab-pane" type="button"
+            role="tab" aria-controls="nutriente-tab-pane" aria-selected="true">Nutrientes</button>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="nutriente-tab-pane" role="tabpanel" aria-labelledby="nutriente-tab" tabindex="0">
+
+        <div class="mt-2">
+            <p class="fs-5">Cadastrar</p>
+            <form id="formCadastrarNutrientes">
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome do nutriente" required>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="formula" class="form-label">Fórmula</label>
+                            <input type="text" class="form-control" id="formula" name="formula" placeholder="Digite a fórmula do nutriente" required>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="formula" class="form-label" style="color: rgba(4, 23, 39, 0.014);">Cadastrar</label>
+                            <button type="submit" class="btn btn-primary form-control">Cadastrar</button>                            
+                        </div>
+                    </div>
+                </div>                
+            </form>
+        </div>
+
+        <hr>
+        <div class="mt-5">
+            <div class="row justify-content-between">
+                <div class="col-auto">
+                    <p class="fs-5 mb-3">Lista de nutrientes</p>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Search">
+                </div>
+            </div>
+
+            <table class="table table-striped" id="tabelaNutrientes">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Fórmula</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- As linhas da tabela serão inseridas aqui dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>
+<script>
+    // Função para adicionar uma nova linha na tabela
+    function adicionarLinhaNaTabela(id, nome, formula) {
+        var newRow = $("<tr>");
+        var cols = "";
+
+        cols += '<td>' + id + '</td>';
+        cols += '<td>' + nome + '</td>';
+        cols += '<td>' + formula + '</td>';
+
+        newRow.append(cols);
+        $("#tabelaNutrientes").append(newRow);
+    }
+
+    // Função para limpar o formulário após o envio
+    function limparFormulario() {
+        $('#nome').val('');
+        $('#formula').val('');
+    }
+
+    // Evento de envio do formulário
+    $('#formCadastrarNutrientes').submit(function (event) {
+        event.preventDefault();
+        var nome = $('#nome').val();
+        var formula = $('#formula').val();
+        (async () => {
+            const nutriente = new Parse.Object('Nutriente');
+            nutriente.set('nome', nome);
+            nutriente.set('formula', formula);
+            try {
+                const result = await nutriente.save();
+                adicionarLinhaNaTabela(result.id, result.get('nome'), result.get('formula'));
+                limparFormulario();
+                
+            } catch (error) {
+                console.error('Error while creating Nutriente: ', error);
+            }
+        })();
+    });
+
+    const consultarNutrientes = ()=>{
+        (async () => {
+            const Nutriente = Parse.Object.extend('Nutriente');
+            const query = new Parse.Query(Nutriente);
+            try {
+                const results = await query.find();
+                for (const nutriente of results) {
+                    adicionarLinhaNaTabela(nutriente.id, nutriente.get('nome'), nutriente.get('formula'));
+                }
+            } catch (error) {
+                console.error('Error while fetching Nutriente', error);
+            }
+        })();
+    }
+
+    $(document).ready(function() {
+        consultarNutrientes();
+    });
+</script>

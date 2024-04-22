@@ -7,32 +7,19 @@ const rotas = [
         'path'      :'/',
         'component' :'/front/page/home.html'
     },
+    
     {
-        'path'      :'/elemento/cadastrar',
-        'component' :'/front/page/elemento.cadastrar.html'
+        'path'      :'/nutrientes',
+        'component' :'/front/page/nutrientes.html'
     },
     {
-        'path'      :'/elemento/listar',
-        'component' :'/front/page/elemento.listar.html'
+        'path'      :'/materiaprima',
+        'component' :'/front/page/materiaprima.html'
     },
+    
     {
-        'path'      :'/composto/cadastrar',
-        'component' :'/front/page/composto.cadastrar.html'
+        'path'      :'/projetos',
+        'component' :'/front/page/projetos.html'
     },
-    {
-        'path'      :'/composto/listar',
-        'component' :'/front/page/composto.listar.html'
-    },
-    {
-        'path'      :'/projeto/cadastrar',
-        'component' :'/front/page/projeto.cadastrar.html'
-    },
-    {
-        'path'      :'/projeto/listar',
-        'component' :'/front/page/projeto.listar.html'
-    },
-    {
-        'path'      :'/usuario/listar',
-        'component' :'/front/page/usuario.listar.html'
-    }
+    
 ];
