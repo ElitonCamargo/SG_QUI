@@ -427,7 +427,7 @@
           </div>          
         </form>        
         <!-- Tabela -->
-        <table class="table mt-3" id="addComposicaoProjeto">
+        <table class="table mt-3">
           <thead>
             <tr>
               <th>Matéria Prima</th>
@@ -435,7 +435,7 @@
               <th>Ação</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="addComposicaoProjeto">
           </tbody>
         </table>
       </div>
@@ -485,7 +485,11 @@
           linha.find('td:eq(1)').text(),
           linha.find('td:eq(2)').text()
         );
-    })
+
+        //atualizar tabela agora!
+    });
+
+    
 
     $('#comporProjeto').submit(function(event) {
       event.preventDefault();
