@@ -89,8 +89,31 @@
       // dados para funcionalidade do sistema
       let DADOS = {
         projeto: null,
-        nutriente: []
-      } 
+        nutriente: [],
+        materia_prima: [],
+        garantia: []
+      }
+
+   
+      const estruturarDados = () => {
+        try{
+          DADOS.materia_prima.forEach(mp => {
+            mp.garantia = DADOS.garantia
+              .filter(g => g.materia_prima_id === mp.id)
+              .map(garantia => {
+                const nutriente = DADOS.nutriente.find(n => n.id === garantia.nutriente_id);
+                return {
+                  idNutriente: nutriente.id,
+                  formula: nutriente.formula,
+                  nome: nutriente.nome,
+                  percentual: garantia.percentual
+                };
+              });
+          });
+        }catch(error){
+          console.log(error);
+        }
+      };
 
       const buscarNutrientes = async () => {
         const Nutriente = Parse.Object.extend('Nutriente');
@@ -109,6 +132,54 @@
         }
       }
       buscarNutrientes();
+
+
+      const consultarMateriasP = ()=>{
+        (async () => {
+          const Materia_prima = Parse.Object.extend('Materia_prima');
+          const query = new Parse.Query(Materia_prima);
+          try {
+            const results = await query.find();
+            let listaMateriaPrima = [];
+            for (const result of results) {
+              listaMateriaPrima.push({
+                id: result.id,
+                codigo: result.get('codigo'), 
+                nome: result.get('nome'), 
+                formula: result.get('formula'), 
+                cas_number: result.get('cas_number'), 
+                densidade: result.get('densidade'), 
+                descricao: result.get('descricao')
+              });
+            }
+            DADOS.materia_prima = listaMateriaPrima;
+          } catch (error) {
+            console.error('Error while fetching Materia_prima', error);
+          }
+        })();
+      }
+      consultarMateriasP();
+
+      const consultarGarantia = async () => {
+        const Garantia = Parse.Object.extend('Garantia');
+        const query = new Parse.Query(Garantia);
+        try {
+          const results = await query.find();
+          let garantia = [];
+          for (const object of results) {
+            garantia.push({
+              id: object.id,
+              percentual: object.get('percentual'),
+              materia_prima_id: object.get('materia_prima_id'),
+              nutriente_id: object.get('nutriente_id')
+            });
+          }
+          DADOS.garantia = garantia;
+        } catch (error) {
+          console.error('Error while fetching Garantia', error);
+        }
+      }
+      consultarGarantia();
 
 
       // Função para adicionar uma nova linha à tabela
@@ -181,7 +252,20 @@
           })();
         }            
         consultarProjetos();
-      });      
+      });
+      
+
+      let auto_nutrientes = [];
+      const autocomplete_nutrientes = ()=>{
+        DADOS.nutriente.forEach(n=>{
+          auto_nutrientes.push({
+            "label": `(${n.formula}) ${n.nome}`,
+            "value":n.formula,
+            "id": n.id
+          });
+        })
+      };
+
       // Ao clicar no botão de detalhes do projeto
       $(document).on('click', '.detalhesProjeto', function() { 
         //let linha = $(this).closest('tr');
@@ -209,13 +293,13 @@
             $('#detalhesPojeto_status').text(projeto.status);
             $('#detalhesPojeto_descricao').text(projeto.descricao);
             DADOS.projeto = projeto;
-
+            autocomplete_nutrientes();
+            estruturarDados();
           } catch (error) {
             console.error('Error while fetching Projeto', error);
           }
-        })();       
-        $('#projetoDetalhes-tab').tab('show');        
-
+        })();        
+        $('#projetoDetalhes-tab').tab('show');     
       });
     </script>
 
@@ -272,7 +356,7 @@
     </div>
     <div class="row mt-5">
       <div class="table-responsive">
-        <table class="table">
+        <table class="table" id="tableComposicaoProjeto">
             <thead>
                 <tr>
                     <th scope="col">Ordem</th>
@@ -280,38 +364,13 @@
                     <th scope="col">Percentual</th>
                     <th scope="col">Tempo de Agitação</th>
                     <th scope="col">Observação</th>
+                    <th scope="col">Ação</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                  <td><i class="bi bi-arrows-move"></i> 1</td>
-                  <td>Água</td>
-                  <td>27,5%</td>
-                  <td contenteditable="true">0</td>
-                  <td contenteditable="true"></td>
-                </tr>
-                <tr>
-                  <td><i class="bi bi-arrows-move"></i> 2</td>
-                  <td>Ureia</td>
-                  <td>10%</td>
-                  <td contenteditable="true">0</td>
-                  <td contenteditable="true"></td>
-                </tr>
-                <tr>
-                  <td><i class="bi bi-arrows-move"></i> 3</td>
-                  <td>Sulfato de Manganês</td>
-                  <td>20%</td>
-                  <td contenteditable="true">0</td>
-                  <td contenteditable="true"></td>
-                </tr>
-                <tr>
-                  <td><i class="bi bi-arrows-move"></i> 4</td>
-                  <td>Sulfato de Amônia</td>
-                  <td>22,5%</td>
-                  <td contenteditable="true">0</td>
-                  <td contenteditable="true"></td>
-                </tr>
-              </tbody>
+            <tbody>                
+                
+            </tbody>
+            <tfoot>
               <tr>                  
                   <td scope="col" colspan="5">
                     <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-plus-circle"></i></button>
@@ -322,13 +381,14 @@
                 <th scope="col">80%</th>
                 <th scope="col">0</th>
                 <th scope="col"></th>
-            </tr>
+              </tr>
               <tr>                  
                 <th scope="col" colspan="2">Densidade</th>
                 <th scope="col">1,2kg/l</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
-            </tr>
+              </tr>
+            </tfoot>
         </table>
         <div class="progress">
           <div class="progress-bar bg-primary" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
@@ -354,32 +414,20 @@
           <div class="row">
             <div class="col-5 mb-3">
               <label for="percentual" class="form-label">Percentual</label>
-              <input type="text" class="form-control" id="percentual" value="4,5" placeholder="Digite o percentual">
+              <input type="text" class="form-control" id="modal_percentual" placeholder="Digite o percentual">
             </div>
             <div class="col-5 mb-3">
               <label for="nutriente" class="form-label">Nutriente</label>
-              <input type="text" class="form-control" id="nutriente" value="N" placeholder="Digite o nutriente">
+              <input type="text" class="form-control" id="modal_nutriente" placeholder="Digite o nutriente">
             </div>
             <div class="col-2 mb-3">
               <label for="nutriente" class="form-label" style="color: rgba(240, 248, 255, 0);">Ação</label>
               <button type="submit" class="btn btn-primary form-control"><i class="bi bi-search"></i></button>
             </div>
           </div>          
-        </form>
-        <script>
-          $(document).ready(function() {
-            $('#comporProjeto').submit(function(event) {
-              event.preventDefault();
-              let percentual = $('#percentual').val();
-              let nutriente = $('#nutriente').val();
-              console.log("Percentual:", percentual);
-              console.log("Nutriente:", nutriente);
-              console.log(DADOS.projeto);
-            });
-          });
-        </script>
+        </form>        
         <!-- Tabela -->
-        <table class="table mt-3">
+        <table class="table mt-3" id="addComposicaoProjeto">
           <thead>
             <tr>
               <th>Matéria Prima</th>
@@ -388,19 +436,98 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Ureia</td>
-              <td>10%</td>
-              <td><button type="button" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add</button></td>
-            </tr>
-            <tr>
-              <td>Uram</td>
-              <td>14%</td>
-              <td><button type="button" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add</button></td>
-            </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
+<script>
+
+
+  $(document).ready(function() {         
+
+    $('#modal_nutriente').autocomplete({
+    source: auto_nutrientes,
+    select: function(event, ui) {
+      $('#addComposicaoProjeto').empty();
+      let id = ui.item.id
+      let mps = [];
+      DADOS.materia_prima.forEach(materia_prima => {
+        materia_prima.garantia.forEach(garantia => {
+          if (garantia.idNutriente == id) {
+            mps.push(materia_prima);
+          }
+        });
+      });
+      mps.forEach(mp=>{
+        mp.garantia.forEach(g=>{
+          if(g.idNutriente == id){
+            let percentualNutriente = parseFloat($('#modal_percentual').val());
+            let percentualMp = (percentualNutriente * 100) / g.percentual;
+            addPossivelComposicao(mp.id,mp.nome,percentualMp,g.formula,percentualNutriente);
+          }
+        })
+      })
+      
+      }
+    }).autocomplete("widget").css("z-index", "9999");
+
+
+    $('#addComposicaoProjeto').on('click', '.add', function() {        
+        // let id = $(this).data('id');
+        let linha = $(this).closest('tr');        
+        //addComposicaoProjeto(idMp, nomeMp, percentualMp, formulaNutriente, percentualN)
+        addComposicaoProjeto(
+          linha.find('td:eq(0)').text(),
+          linha.find('td:eq(3)').text(),
+          linha.find('td:eq(4)').text(),
+          linha.find('td:eq(1)').text(),
+          linha.find('td:eq(2)').text()
+        );
+    })
+
+    $('#comporProjeto').submit(function(event) {
+      event.preventDefault();
+      let percentual = $('#percentual').val();
+      let nutriente = $('#nutriente').val();
+      console.log(DADOS);
+    });
+
+    const addPossivelComposicao = (idMp, nomeMp, percentualMp, formulaNutriente, percentualN)=>{
+      let newRow = $('<tr>');
+      let cols= `
+        <td style="display: none;">${idMp}</td>
+        <td style="display: none;">${formulaNutriente}</td>
+        <td style="display: none;">${percentualN}</td>
+        <td>${nomeMp}</td>
+        <td>${percentualMp}</td>
+        <td><button type="button" class="btn btn-link add" data-id="1"><i class="bi bi-plus-circle"></i></button></td>
+      `;
+      newRow.append(cols);
+      $('#addComposicaoProjeto').append(newRow);
+    }
+
+    const addComposicaoProjeto = (idMp, nomeMp, percentualMp, formulaNutriente, percentualN)=>{
+      let newRow = $("<tr>");
+      var cols = `
+        <td style="display: none;">${idMp}</td>
+        <td style="display: none;">${formulaNutriente}</td>
+        <td style="display: none;">${percentualN}</td>
+        <td><i class="bi bi-arrows-move"></i></td>
+        <td>${nomeMp}</td>
+        <td>${percentualMp}</td>
+        <td contenteditable="true">0</td>
+        <td contenteditable="true"></td>              
+        <td style="width:100px">
+            <button type="button" class="btn btn-danger  btn-sm deleteComposicao" data-id="${idMp}"><i class="bi bi-trash"></i></button>
+            <button type="button" class="btn btn-primary btn-sm salvarComposicao" data-id="${idMp}"><i class="bi bi-floppy"></i></button>
+        </td>`;
+
+      newRow.append(cols);
+      $("#tableComposicaoProjeto").append(newRow);
+    }
+
+    
+  });
+</script>

@@ -91,7 +91,7 @@
             cols += '<td>' + densidade + '</td>';
             cols += '<td>' + descricao + '</td>';
             cols += `<td>
-              <button type="button" class="btn btn-danger   btn-sm"><i class="bi bi-trash"></i></button>
+              <button type="button" class="btn btn-danger   btn-sm deletarMateriaP" data-id="${id}"><i class="bi bi-trash"></i></button>
               <button type="button" class="btn btn-primary  btn-sm detalhesMateriaP" data-id="${id}"><i class="bi bi-three-dots-vertical"></i></button>
               </td>`;
               newRow.append(cols);
@@ -126,6 +126,30 @@
                   console.error('Error while fetching Garantia', error);
                 }
               })();            
+            });
+
+
+              // Funcionalidades para excluir os dados da matéria prima.
+              $(document).on('click', '.deletarMateriaP', function() {
+              
+              let linha = $(this).closest('tr');
+              idMateriaPrima = $(this).data('id');
+              (async () => {
+                const query = new Parse.Query('Materia_prima');
+                try {
+                  // here you put the objectId that you want to delete
+                  const object = await query.get(idMateriaPrima);
+                  try {
+                    const response = await object.destroy();
+                    linha.remove();
+
+                  } catch (error) {
+                    console.error('Error while deleting ParseObject', error);
+                  }
+                } catch (error) {
+                  console.error('Error while retrieving ParseObject', error);
+                }
+              })();         
             });
             
             // Evento de envio do formulário

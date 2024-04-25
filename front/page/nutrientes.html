@@ -71,8 +71,8 @@
         cols += '<td>' + nome + '</td>';
         cols += '<td>' + formula + '</td>';
         cols += `<td style="width:100px">
-              <button type="button" class="btn btn-danger   btn-sm"><i class="bi bi-trash"></i></button>
-              <button type="button" class="btn btn-primary  btn-sm" data-id="${id}"><i class="bi bi-three-dots-vertical"></i></button>
+              <button type="button" class="btn btn-danger  btn-sm deleteNutriente" data-id="${id}"><i class="bi bi-trash"></i></button>
+              <button type="button" class="btn btn-primary btn-sm" data-id="${id}"><i class="bi bi-three-dots-vertical"></i></button>
             </td>`;
 
         newRow.append(cols);
@@ -84,6 +84,31 @@
         $('#nome').val('');
         $('#formula').val('');
     }
+
+    // Deletar nutriente.
+    $('#tabelaNutrientes').on('click', '.deleteNutriente', function() {        
+        let id = $(this).data('id');
+        if(confirm('Confirma ação?')){
+            (async () => {
+            const query = new Parse.Query('Nutriente');
+            try {
+                // here you put the objectId that you want to delete
+                const object = await query.get(id);
+                try {
+                    const response = await object.destroy();
+                    $(this).closest('tr').remove();
+                } catch (error) {
+                console.error('Error while deleting ParseObject', error);
+                }
+            } catch (error) {
+                console.error('Error while retrieving ParseObject', error);
+            }
+            })();
+        }
+
+    })
+
+
 
     // Evento de envio do formulário
     $('#formCadastrarNutrientes').submit(function (event) {
