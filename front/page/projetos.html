@@ -327,26 +327,15 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Tabela de nutrientes</h5>
-            <table class="table">
+            <table class="table" id="nutricional">
               <thead>
                 <tr>
                   <th>Nutriente</th>
                   <th>Percentual</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>N</td>
-                  <td>9%</td>
-                </tr>
-                <tr>
-                  <td>Mn</td>
-                  <td>6.2%</td>
-                </tr>
-                <tr>
-                  <td>S</td>
-                  <td>8.45%</td>
-                </tr>
+              <tbody>               
+               
               </tbody>
             </table>
           </div>
@@ -378,7 +367,7 @@
               </tr>
               <tr>                  
                 <th scope="col" colspan="2">Total</th>
-                <th scope="col">80%</th>
+                <th scope="col" id="total">0%</th>
                 <th scope="col">0</th>
                 <th scope="col"></th>
               </tr>
@@ -487,9 +476,43 @@
         );
 
         //atualizar tabela agora!
+        atualizarTableComposicao();
     });
 
-    
+    const atualizarTableComposicao = () => {
+      let total = 0;
+      let nutricional = {}; // Inicialize o objeto nutricional como um objeto vazio
+      $('#tableComposicaoProjeto tbody tr').each(function () {
+        // Obtém o percentual da célula atual e adiciona ao total
+        let percentual = parseFloat($(this).find('td:eq(5)').text());
+        let percentualN = parseFloat($(this).find('td:eq(2)').text());
+        total += percentual;
+
+        // Obtém o nutriente da célula atual
+        let nutriente = $(this).find('td:eq(1)').text();
+
+        // Verifica se o nutriente já existe no objeto nutricional
+        if (!(nutriente in nutricional)) {
+          nutricional[nutriente] = 0; // Se não existe, inicializa com 0
+        }
+
+        // Adiciona o percentual ao valor existente do nutriente
+        nutricional[nutriente] += percentualN;
+      });
+
+      console.log(nutricional);
+      $('#nutricional tbody').empty(); // Limpa o conteúdo da tabela antes de adicionar os novos dados
+      $.each(nutricional, function (nutriente, valor) {
+        let tr = `
+          <tr>
+            <td>${nutriente}</td>
+            <td>${valor.toFixed(2)}%</td>
+          </tr>
+        `;
+        $('#nutricional tbody').append(tr); // Adiciona cada linha à tabela
+      });
+      $('#total').text(total.toFixed(2) + '%'); // Arredonda o total para duas casas decimais
+    };
 
     $('#comporProjeto').submit(function(event) {
       event.preventDefault();
