@@ -1,0 +1,560 @@
+<!-- ********************************** Tabs de navegação ********************************** -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="projetos-tab" data-bs-toggle="tab" data-bs-target="#projetos-tab-pane"
+      type="button" role="tab" aria-controls="projetos-tab-pane" aria-selected="true">Projetos</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="projetoDetalhes-tab" data-bs-toggle="tab" data-bs-target="#projetoDetalhes-tab-pane" type="button"
+      role="tab" aria-controls="projetoDetalhes-tab-pane" aria-selected="false" disabled>Detalhes</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+
+<!-- ********************************** Projetos ********************************** -->
+  <div class="tab-pane fade show active" id="projetos-tab-pane" role="tabpanel" aria-labelledby="projetos-tab" tabindex="0">    
+    <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
+      Cadastrar
+      <button type="button" class="btn btn-link btn-sm" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="bi bi-plus-circle"></i></button>
+    </p>
+    <div class="collapse" id="collapseExample">
+      <form id="formCadastrarProjeto">
+        <div class="row">
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="nome" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="nome" name="nome" maxlength="50" required>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="data_inicio" class="form-label">Data de Início</label>
+              <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="data_termino" class="form-label">Data de Término</label>
+              <input type="date" class="form-control" id="data_termino" name="data_termino">
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="status" class="form-label">Status</label>
+              <select class="form-select" class="form-control" id="status" name="status" aria-label="0">
+                <option selected value="Aguardando aprovação">Aguardando aprovação</option>
+                <option value="Inicializado">Inicializado</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="mb-3">
+              <label for="descricao" class="form-label">Descrição</label>
+              <textarea class="form-control" id="descricao" name="descricao" rows="1"></textarea>
+            </div>
+          </div>        
+        </div>
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+      </form>
+    </div>
+    <hr>
+    <div class="mt-5">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <p class="fs-5">Listar</p>
+        </div>
+        <div class="col-auto">
+            <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Search">
+        </div>
+      </div>
+      <table class="table">
+          <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Data de Início</th>
+                <th>Data de Término</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+          </thead>
+          <tbody id="tabelaProjetos">
+              <!-- Linhas da tabela serão inseridas aqui dinamicamente -->
+          </tbody>
+      </table>
+    </div>
+    <script>
+      // dados para funcionalidade do sistema
+      let DADOS = {
+        projeto: null,
+        nutriente: [],
+        materia_prima: [],
+        garantia: []
+      }
+
+   
+      const estruturarDados = () => {
+        try{
+          DADOS.materia_prima.forEach(mp => {
+            mp.garantia = DADOS.garantia
+              .filter(g => g.materia_prima_id === mp.id)
+              .map(garantia => {
+                const nutriente = DADOS.nutriente.find(n => n.id === garantia.nutriente_id);
+                return {
+                  idNutriente: nutriente.id,
+                  formula: nutriente.formula,
+                  nome: nutriente.nome,
+                  percentual: garantia.percentual
+                };
+              });
+          });
+        }catch(error){
+          console.log(error);
+        }
+      };
+
+      const buscarNutrientes = async () => {
+        const Nutriente = Parse.Object.extend('Nutriente');
+        const query = new Parse.Query(Nutriente);
+        // You can also query by using a parameter of an object
+        // query.equalTo('objectId', 'xKue915KBG');
+        try {
+          const results = await query.find();
+          let nutriente = [];
+          for (const object of results) {
+            nutriente.push({id:object.id, nome:object.get('nome'), formula: object.get('formula')});
+          }
+          DADOS.nutriente = nutriente;
+        } catch (error) {
+          console.error('Error while fetching Nutriente', error);
+        }
+      }
+      buscarNutrientes();
+
+
+      const consultarMateriasP = ()=>{
+        (async () => {
+          const Materia_prima = Parse.Object.extend('Materia_prima');
+          const query = new Parse.Query(Materia_prima);
+          try {
+            const results = await query.find();
+            let listaMateriaPrima = [];
+            for (const result of results) {
+              listaMateriaPrima.push({
+                id: result.id,
+                codigo: result.get('codigo'), 
+                nome: result.get('nome'), 
+                formula: result.get('formula'), 
+                cas_number: result.get('cas_number'), 
+                densidade: result.get('densidade'), 
+                descricao: result.get('descricao')
+              });
+            }
+            DADOS.materia_prima = listaMateriaPrima;
+          } catch (error) {
+            console.error('Error while fetching Materia_prima', error);
+          }
+        })();
+      }
+      consultarMateriasP();
+
+      const consultarGarantia = async () => {
+        const Garantia = Parse.Object.extend('Garantia');
+        const query = new Parse.Query(Garantia);
+        try {
+          const results = await query.find();
+          let garantia = [];
+          for (const object of results) {
+            garantia.push({
+              id: object.id,
+              percentual: object.get('percentual'),
+              materia_prima_id: object.get('materia_prima_id'),
+              nutriente_id: object.get('nutriente_id')
+            });
+          }
+          DADOS.garantia = garantia;
+        } catch (error) {
+          console.error('Error while fetching Garantia', error);
+        }
+      }
+      consultarGarantia();
+
+
+      // Função para adicionar uma nova linha à tabela
+      function adicionarLinhaNaTabela(id, nome, data_inicio, data_termino, status) {
+          let newRow = $('<tr>');
+            let cols =
+            `<td>${id}</td>
+            <td>${nome}</td>
+            <td><input type="date" value="${data_inicio}" style="border-color: #ffffff08; background-color:#ffffff08;" disabled></td>
+            <td><input type="date" value="${data_termino}" style="border-color: #ffffff08; background-color:#ffffff08;" disabled></td>
+            <td>${status}</td>
+            <td>
+              <button type="button" class="btn btn-danger   btn-sm"><i class="bi bi-trash"></i></button>
+              <button type="button" class="btn btn-primary  btn-sm detalhesProjeto" data-id="${id}"><i class="bi bi-three-dots-vertical"></i></button>
+            </td>`;
+            newRow.append(cols);
+            $("#tabelaProjetos").append(newRow);
+      }
+      
+      $(document).ready(function() {
+        // Cadastrar projeto
+        $('#formCadastrarProjeto').submit(function(event) {
+          event.preventDefault();              
+          let nome = $("#nome").val();
+          let data_inicio = $("#data_inicio").val();
+          let data_termino = $("#data_termino").val();
+          let status = $("#status").val();
+          let descricao = $('#descricao').val();
+          
+          (async () => {
+            const objProjeto = new Parse.Object('Projeto');
+            objProjeto.set('nome', nome);
+            objProjeto.set('data_inicio', data_inicio);
+            objProjeto.set('data_termino', data_termino);
+            objProjeto.set('status', status);
+            objProjeto.set('descricao', descricao);
+            try {
+              const projeto = await objProjeto.save();
+              adicionarLinhaNaTabela(
+                projeto.id, 
+                projeto.get('nome'), 
+                projeto.get('data_inicio'), 
+                projeto.get('data_termino'), 
+                projeto.get('status')
+              );
+            } catch (error) {
+              console.error('Error while creating Projeto: ', error);
+            }
+          })();
+        });
+        // Consultar projetos já cadastrados
+        const consultarProjetos = ()=>{
+          (async () => {
+            const Projeto = Parse.Object.extend('Projeto');
+            const query = new Parse.Query(Projeto);
+            try {
+              const projetos = await query.find();
+              projetos.forEach(projeto => {
+                adicionarLinhaNaTabela(
+                  projeto.id, 
+                  projeto.get('nome'), 
+                  projeto.get('data_inicio'), 
+                  projeto.get('data_termino'), 
+                  projeto.get('status')
+                );
+              });                  
+            } catch (error) {
+              console.error('Error while fetching Projeto', error);
+            }
+          })();
+        }            
+        consultarProjetos();
+      });
+      
+
+      let auto_nutrientes = [];
+      const autocomplete_nutrientes = ()=>{
+        DADOS.nutriente.forEach(n=>{
+          auto_nutrientes.push({
+            "label": `(${n.formula}) ${n.nome}`,
+            "value":n.formula,
+            "id": n.id
+          });
+        })
+      };
+
+      // Ao clicar no botão de detalhes do projeto
+      $(document).on('click', '.detalhesProjeto', function() { 
+        //let linha = $(this).closest('tr');
+        //$('#nomeMateriaPrima').text(linha.find('td:eq(1)').text());  
+        let idProjeto = $(this).data('id');
+        
+        (async () => {
+          const Projeto = Parse.Object.extend('Projeto');
+          const query = new Parse.Query(Projeto);
+          query.equalTo('objectId', idProjeto);
+          try {
+            const result = (await query.find())[0];
+            const projeto = {
+              id: result.id,
+              nome: result.get('nome'),
+              data_inicio: result.get('data_inicio'),
+              data_termino: result.get('data_termino'),
+              status: result.get('status'),
+              descricao: result.get('descricao'),
+            }                 
+            $('#detalhesPojeto_id').text(projeto.id);  
+            $('#detalhesPojeto_nome').text(projeto.nome);
+            $('#detalhesPojeto_data_inicio').text(projeto.data_inicio);
+            $('#detalhesPojeto_data_termino').text(projeto.data_termino);
+            $('#detalhesPojeto_status').text(projeto.status);
+            $('#detalhesPojeto_descricao').text(projeto.descricao);
+            DADOS.projeto = projeto;
+            autocomplete_nutrientes();
+            estruturarDados();
+          } catch (error) {
+            console.error('Error while fetching Projeto', error);
+          }
+        })();        
+        $('#projetoDetalhes-tab').tab('show');     
+      });
+    </script>
+
+  </div>
+
+<!-- ********************************** Detalhes ********************************** -->
+  <div class="tab-pane fade" id="projetoDetalhes-tab-pane" role="tabpanel" aria-labelledby="projetoDetalhes-tab" tabindex="0">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Detalhes do Projeto</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><strong>ID:</strong>              <span id="detalhesPojeto_id"></span></li>
+              <li class="list-group-item"><strong>Nome:</strong>            <span id="detalhesPojeto_nome"></span></li>
+              <li class="list-group-item"><strong>Data de Início:</strong>  <span id="detalhesPojeto_data_inicio"></span></li>
+              <li class="list-group-item"><strong>Data de Término:</strong> <span id="detalhesPojeto_data_termino"></span></li>
+              <li class="list-group-item"><strong>Descrição:</strong>       <span id="detalhesPojeto_descricao"></span></li>
+              <li class="list-group-item"><strong>Status:</strong>          <span id="detalhesPojeto_status"></span></li>
+            </ul>
+          </div>
+        </div>        
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tabela de nutrientes</h5>
+            <table class="table" id="nutricional">
+              <thead>
+                <tr>
+                  <th>Nutriente</th>
+                  <th>Percentual</th>
+                </tr>
+              </thead>
+              <tbody>               
+               
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="table-responsive">
+        <table class="table" id="tableComposicaoProjeto">
+            <thead>
+                <tr>
+                    <th scope="col">Ordem</th>
+                    <th scope="col">Matéria Prima</th>
+                    <th scope="col">Percentual</th>
+                    <th scope="col">Tempo de Agitação</th>
+                    <th scope="col">Observação</th>
+                    <th scope="col">Ação</th>
+                </tr>
+            </thead>
+            <tbody>                
+                
+            </tbody>
+            <tfoot>
+              <tr>                  
+                  <td scope="col" colspan="5">
+                    <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-plus-circle"></i></button>
+                  </td>
+              </tr>
+              <tr>                  
+                <th scope="col" colspan="2">Total</th>
+                <th scope="col" id="total">0%</th>
+                <th scope="col">0</th>
+                <th scope="col"></th>
+              </tr>
+              <tr>                  
+                <th scope="col" colspan="2">Densidade</th>
+                <th scope="col">1,2kg/l</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+              </tr>
+            </tfoot>
+        </table>
+        <div class="progress">
+          <div class="progress-bar bg-primary" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
+          <div class="progress-bar bg-secondary" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Compor projeto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulário -->
+        <form id="comporProjeto">
+          <div class="row">
+            <div class="col-5 mb-3">
+              <label for="percentual" class="form-label">Percentual</label>
+              <input type="text" class="form-control" id="modal_percentual" placeholder="Digite o percentual">
+            </div>
+            <div class="col-5 mb-3">
+              <label for="nutriente" class="form-label">Nutriente</label>
+              <input type="text" class="form-control" id="modal_nutriente" placeholder="Digite o nutriente">
+            </div>
+            <div class="col-2 mb-3">
+              <label for="nutriente" class="form-label" style="color: rgba(240, 248, 255, 0);">Ação</label>
+              <button type="submit" class="btn btn-primary form-control"><i class="bi bi-search"></i></button>
+            </div>
+          </div>          
+        </form>        
+        <!-- Tabela -->
+        <table class="table mt-3">
+          <thead>
+            <tr>
+              <th>Matéria Prima</th>
+              <th>Percentual</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="addComposicaoProjeto">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+
+  $(document).ready(function() {         
+
+    $('#modal_nutriente').autocomplete({
+    source: auto_nutrientes,
+    select: function(event, ui) {
+      $('#addComposicaoProjeto').empty();
+      let id = ui.item.id
+      let mps = [];
+      DADOS.materia_prima.forEach(materia_prima => {
+        materia_prima.garantia.forEach(garantia => {
+          if (garantia.idNutriente == id) {
+            mps.push(materia_prima);
+          }
+        });
+      });
+      mps.forEach(mp=>{
+        mp.garantia.forEach(g=>{
+          if(g.idNutriente == id){
+            let percentualNutriente = parseFloat($('#modal_percentual').val());
+            let percentualMp = (percentualNutriente * 100) / g.percentual;
+            addPossivelComposicao(mp.id,mp.nome,percentualMp,g.formula,percentualNutriente);
+          }
+        })
+      })
+      
+      }
+    }).autocomplete("widget").css("z-index", "9999");
+
+
+    $('#addComposicaoProjeto').on('click', '.add', function() {        
+        // let id = $(this).data('id');
+        let linha = $(this).closest('tr');        
+        //addComposicaoProjeto(idMp, nomeMp, percentualMp, formulaNutriente, percentualN)
+        addComposicaoProjeto(
+          linha.find('td:eq(0)').text(),
+          linha.find('td:eq(3)').text(),
+          linha.find('td:eq(4)').text(),
+          linha.find('td:eq(1)').text(),
+          linha.find('td:eq(2)').text()
+        );
+
+        //atualizar tabela agora!
+        atualizarTableComposicao();
+    });
+
+    const atualizarTableComposicao = () => {
+      let total = 0;
+      let nutricional = {}; // Inicialize o objeto nutricional como um objeto vazio
+      $('#tableComposicaoProjeto tbody tr').each(function () {
+        // Obtém o percentual da célula atual e adiciona ao total
+        let percentual = parseFloat($(this).find('td:eq(5)').text());
+        let percentualN = parseFloat($(this).find('td:eq(2)').text());
+        total += percentual;
+
+        // Obtém o nutriente da célula atual
+        let nutriente = $(this).find('td:eq(1)').text();
+
+        // Verifica se o nutriente já existe no objeto nutricional
+        if (!(nutriente in nutricional)) {
+          nutricional[nutriente] = 0; // Se não existe, inicializa com 0
+        }
+
+        // Adiciona o percentual ao valor existente do nutriente
+        nutricional[nutriente] += percentualN;
+      });
+
+      console.log(nutricional);
+      $('#nutricional tbody').empty(); // Limpa o conteúdo da tabela antes de adicionar os novos dados
+      $.each(nutricional, function (nutriente, valor) {
+        let tr = `
+          <tr>
+            <td>${nutriente}</td>
+            <td>${valor.toFixed(2)}%</td>
+          </tr>
+        `;
+        $('#nutricional tbody').append(tr); // Adiciona cada linha à tabela
+      });
+      $('#total').text(total.toFixed(2) + '%'); // Arredonda o total para duas casas decimais
+    };
+
+    $('#comporProjeto').submit(function(event) {
+      event.preventDefault();
+      let percentual = $('#percentual').val();
+      let nutriente = $('#nutriente').val();
+      console.log(DADOS);
+    });
+
+    const addPossivelComposicao = (idMp, nomeMp, percentualMp, formulaNutriente, percentualN)=>{
+      let newRow = $('<tr>');
+      let cols= `
+        <td style="display: none;">${idMp}</td>
+        <td style="display: none;">${formulaNutriente}</td>
+        <td style="display: none;">${percentualN}</td>
+        <td>${nomeMp}</td>
+        <td>${percentualMp}</td>
+        <td><button type="button" class="btn btn-link add" data-id="1"><i class="bi bi-plus-circle"></i></button></td>
+      `;
+      newRow.append(cols);
+      $('#addComposicaoProjeto').append(newRow);
+    }
+
+    const addComposicaoProjeto = (idMp, nomeMp, percentualMp, formulaNutriente, percentualN)=>{
+      let newRow = $("<tr>");
+      var cols = `
+        <td style="display: none;">${idMp}</td>
+        <td style="display: none;">${formulaNutriente}</td>
+        <td style="display: none;">${percentualN}</td>
+        <td><i class="bi bi-arrows-move"></i></td>
+        <td>${nomeMp}</td>
+        <td>${percentualMp}</td>
+        <td contenteditable="true">0</td>
+        <td contenteditable="true"></td>              
+        <td style="width:100px">
+            <button type="button" class="btn btn-danger  btn-sm deleteComposicao" data-id="${idMp}"><i class="bi bi-trash"></i></button>
+            <button type="button" class="btn btn-primary btn-sm salvarComposicao" data-id="${idMp}"><i class="bi bi-floppy"></i></button>
+        </td>`;
+
+      newRow.append(cols);
+      $("#tableComposicaoProjeto").append(newRow);
+    }
+
+    
+  });
+</script>

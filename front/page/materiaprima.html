@@ -1,0 +1,346 @@
+<!-- ********************************** Tabs de navegação ********************************** -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="materiaprima-tab" data-bs-toggle="tab" data-bs-target="#materiaprima-tab-pane"
+      type="button" role="tab" aria-controls="materiaprima-tab-pane" aria-selected="true">Materia prima</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="garantia-tab" data-bs-toggle="tab" data-bs-target="#garantia-tab-pane" type="button"
+      role="tab" aria-controls="garantia-tab-pane" aria-selected="false" disabled>Garantia</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+
+<!-- ********************************** Matéria prima ********************************** -->
+  <div class="tab-pane fade show active" id="materiaprima-tab-pane" role="tabpanel" aria-labelledby="materiaprima-tab" tabindex="0">    
+    <p class="fs-5">Cadastrar</p>
+    <form id="formCadastrarMateriaPrima">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="mb-3">
+            <label for="codigo" class="form-label">Código</label>
+            <input type="number" class="form-control" id="codigo" name="codigo" required>
+          </div>
+          <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="nome" name="nome" maxlength="50" required>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-3">
+            <label for="formula" class="form-label">Fórmula</label>
+            <input type="text" class="form-control" id="formula" name="formula" maxlength="20" required>
+          </div>
+          <div class="mb-3">
+            <label for="cas_number" class="form-label">CAS Number</label>
+            <input type="text" class="form-control" id="cas_number" name="cas_number" maxlength="50">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-3">
+            <label for="densidade" class="form-label">Densidade</label>
+            <input type="number" class="form-control" id="densidade" name="densidade" step="0.00001" required>
+          </div>
+          <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea class="form-control" id="descricao" name="descricao" rows="1"></textarea>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Cadastrar</button>
+    </form>
+    <hr>
+    <div class="mt-5">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <p class="fs-5">Listar</p>
+        </div>
+        <div class="col-auto">
+            <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Search">
+        </div>
+      </div>
+      <table class="table">
+          <thead>
+              <tr>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Fórmula</th>
+                  <th>CAS Number</th>
+                  <th>Densidade</th>
+                  <th>Descrição</th>
+                  <th>Ação</th>
+              </tr>
+          </thead>
+          <tbody id="tabelaMateriaPrima">
+              <!-- Linhas da tabela serão inseridas aqui dinamicamente -->
+          </tbody>
+      </table>
+    </div>
+
+    <script>      
+      let dadosGarantia = [];
+      $(document).ready(function() {
+        // Função para adicionar uma nova linha à tabela
+        function adicionarLinhaNaTabela(id, codigo, nome, formula, cas_number, densidade, descricao) {
+          let newRow = $('<tr>');
+            let cols = "";
+            cols += '<td>' + codigo + '</td>';
+            cols += '<td>' + nome + '</td>';
+            cols += '<td>' + formula + '</td>';
+            cols += '<td>' + cas_number + '</td>';
+            cols += '<td>' + densidade + '</td>';
+            cols += '<td>' + descricao + '</td>';
+            cols += `<td>
+              <button type="button" class="btn btn-danger   btn-sm deletarMateriaP" data-id="${id}"><i class="bi bi-trash"></i></button>
+              <button type="button" class="btn btn-primary  btn-sm detalhesMateriaP" data-id="${id}"><i class="bi bi-three-dots-vertical"></i></button>
+              </td>`;
+              newRow.append(cols);
+              $("#tabelaMateriaPrima").append(newRow);
+            }
+            
+   
+            // Funcionalidades para exibir os dados da garantia da matéria prima.
+            $(document).on('click', '.detalhesMateriaP', function() {
+              $('#tabelaGarantia tbody').empty(); //LImpar tabela para receber novos dados 
+              let linha = $(this).closest('tr');
+              $('#nomeMateriaPrima').text(linha.find('td:eq(1)').text());  
+              dadosGarantia.id = $(this).data('id');
+              (async () => {
+                const Garantia = Parse.Object.extend('Garantia');
+                const query = new Parse.Query(Garantia);
+                query.equalTo('materia_prima_id', dadosGarantia.id);
+                try {
+                  const results = await query.find();
+                  dadosGarantia.dados = results;                  
+                  dadosGarantia.dados.forEach(garantia => {
+                    let result = nutrientes.find((n)=> n.id == garantia.get('nutriente_id'));             
+                    const g = {
+                      "id":garantia.id,
+                      "nome": result.value,
+                      "percentual": garantia.get('percentual')
+                    }
+                    addLinhaAtabelaGarantia(g);
+                  });                  
+                  $('#garantia-tab').tab('show');                                    
+                } catch (error) {
+                  console.error('Error while fetching Garantia', error);
+                }
+              })();            
+            });
+
+
+              // Funcionalidades para excluir os dados da matéria prima.
+              $(document).on('click', '.deletarMateriaP', function() {
+              
+              let linha = $(this).closest('tr');
+              idMateriaPrima = $(this).data('id');
+              (async () => {
+                const query = new Parse.Query('Materia_prima');
+                try {
+                  // here you put the objectId that you want to delete
+                  const object = await query.get(idMateriaPrima);
+                  try {
+                    const response = await object.destroy();
+                    linha.remove();
+
+                  } catch (error) {
+                    console.error('Error while deleting ParseObject', error);
+                  }
+                } catch (error) {
+                  console.error('Error while retrieving ParseObject', error);
+                }
+              })();         
+            });
+            
+            // Evento de envio do formulário
+            $('#formCadastrarMateriaPrima').submit(function(event) {
+              event.preventDefault();
+              let codigo = $('#codigo').val();
+              let nome = $('#nome').val();
+              let formula = $('#formula').val();
+              let cas_number = $('#cas_number').val();
+              let densidade = $('#densidade').val();
+              let descricao = $('#descricao').val();
+              
+              (async () => {
+                const myNewObject = new Parse.Object('Materia_prima');
+                myNewObject.set('codigo', codigo);
+                myNewObject.set('nome', nome);
+                myNewObject.set('formula', formula);
+                myNewObject.set('cas_number', cas_number);
+                myNewObject.set('densidade', parseFloat(densidade));
+                myNewObject.set('descricao', descricao);
+                try {
+                  const result = await myNewObject.save();
+                  adicionarLinhaNaTabela(result.id,result.get('codigo'), result.get('nome'), result.get('formula'), result.get('cas_number'), result.get('densidade'), result.get('descricao'));
+                  this.reset();
+                } catch (error) {
+                  console.error('Error while creating Materia_prima: ', error);
+                }
+              })();
+            });
+            
+            let listaMateriaPrima = [];
+            const consultarMateriasP = ()=>{
+              (async () => {
+                const Materia_prima = Parse.Object.extend('Materia_prima');
+                const query = new Parse.Query(Materia_prima);
+                try {
+                  const results = await query.find();
+                  for (const result of results) {
+                    let m ={
+                      id: result.id,
+                      codigo: result.get('codigo'), 
+                      nome: result.get('nome'), 
+                      formula: result.get('formula'), 
+                      cas_number: result.get('cas_number'), 
+                      densidade: result.get('densidade'), 
+                      descricao: result.get('descricao')
+                    };
+                    listaMateriaPrima.push(m);
+                    adicionarLinhaNaTabela(m.id,m.codigo,m.nome,m.formula,m.cas_number,m.densidade,m.descricao);              
+                  }
+                } catch (error) {
+                  console.error('Error while fetching Materia_prima', error);
+                }
+              })();
+            }
+            
+            consultarMateriasP();
+      });
+      </script>
+
+  </div>
+
+<!-- ********************************** Garantias ********************************** -->
+  <div class="tab-pane fade" id="garantia-tab-pane" role="tabpanel" aria-labelledby="garantia-tab" tabindex="0">
+    <p class="fs-5 text-center" id="nomeMateriaPrima"></p>
+    <p class="fs-5">Garantias</p>
+    <table class="table" id="tabelaGarantia">
+        <thead>
+            <tr>
+                <th>Nutriente</th>
+                <th>Percentual</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Novas linha de garantia serão inseridas aqui. -->  
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" id="adicionar-linha"><i class="bi bi-plus-circle"></i></button>
+  </div>
+  <script>
+    nutrientes = [];
+    $(document).ready(function() {        
+        const consultarNutrientes = ()=>{
+          (async () => {
+              const Nutriente = Parse.Object.extend('Nutriente');
+              const query = new Parse.Query(Nutriente);
+              try {
+                  const results = await query.find();
+                  for (const n of results) {
+                    let nutriente = { 
+                      label: `(${n.get('formula')}) - ${n.get('nome')}`,  
+                      value: `(${n.get('formula')}) - ${n.get('nome')}`,  
+                      id:  n.id 
+                    }
+                      nutrientes.push(nutriente);
+                  }
+              } catch (error) {
+                  console.error('Error while fetching Nutriente', error);
+              }
+          })();
+        }
+        consultarNutrientes();
+
+
+        //Função para cadastrar garantia;
+        $(document).on('click', '.cadastrar-garantia', function(){
+            let linha = $(this).closest('tr');
+            let idNutriente = linha.find('.idNutriente').val();
+            let percentualNutriente = linha.find('.percentualNutriente').val();
+            console.log(dadosGarantia.id,idNutriente,percentualNutriente);
+            (async () => {
+                const myNewObject = new Parse.Object('Garantia');
+                myNewObject.set('percentual', parseFloat(percentualNutriente));
+                myNewObject.set('materia_prima_id', dadosGarantia.id);
+                myNewObject.set('nutriente_id', idNutriente);
+                try {
+                  const result = await myNewObject.save();
+                  console.log('Garantia created', result);
+                } catch (error) {
+                  console.error('Error while creating Garantia: ', error);
+                }
+            })();
+        });
+
+
+        $('#adicionar-linha').click(function(){
+          addLinhaAtabelaGarantia();
+        });
+
+        // Remove a linha ao clicar no botão "Remover"
+        $('#tabelaGarantia').on('click', '.remover-garantia', function() {
+          $(this).closest('tr').remove();
+        });
+        // Remove a linha e apagar garantia do banco ao clicar no botão "Remover"
+        $('#tabelaGarantia').on('click', '.deletar-garantia', function() {
+          let id = $(this).data('id');
+          if(confirm('Confirma ação?')){
+            (async () => {
+              const query = new Parse.Query('Garantia');
+              try {
+                const object = await query.get(id);
+                try {               
+                    const response = await object.destroy();
+                    $(this).closest('tr').remove();
+                } catch (error) {
+                  console.error('Error while deleting ParseObject', error);
+                }
+              } catch (error) {
+                console.error('Error while retrieving ParseObject', error);
+              }
+            })(); 
+          }
+        });
+
+    });
+    const addLinhaAtabelaGarantia = (garantia=null)=>{
+      if(garantia == null){
+        let novaLinhaGarantia = `<tr>
+            <td style="display: none;"><input type="text" class="idNutriente"></td>
+            <td><input type="text" class="form-control nomeNutriente" placeholder="Nutriente"></td>
+            <td><input type="text" class="form-control percentualNutriente" placeholder="0%"></td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm remover-garantia"><i class="bi bi-x-circle"></i></button>
+              <button type="button" class="btn btn-primary btn-sm cadastrar-garantia"><i class="bi bi-floppy"></i></button>
+            </td>
+        </tr> `;
+        let novaLinha = $(novaLinhaGarantia).clone();
+        $('#tabelaGarantia tbody').append(novaLinha);
+        // Inicializar o autocompletar para o novo campo nomeNutriente
+        novaLinha.find('.nomeNutriente').autocomplete({
+            source: nutrientes,
+            select: function(event, ui) {
+                let nutrienteSelecionado = ui.item;
+                let linha = $(this).closest('tr');
+                linha.find('.idNutriente').val(nutrienteSelecionado.id);
+                console.log(nutrienteSelecionado.id);
+            }
+        });
+      }
+      else{
+        let existenteLinhaGarantia = `<tr>
+            <td style="display: none;"><input type="text" class="idNutriente" value="${garantia.id}"></td>
+            <td><input type="text" class="form-control" value="${garantia.nome}" disabled></td>
+            <td><input type="text" class="form-control" value="${garantia.percentual}" disabled></td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm deletar-garantia" data-id="${garantia.id}"><i class="bi bi-x-circle"></i></button>
+            </td>
+        </tr> `;
+        $('#tabelaGarantia tbody').append(existenteLinhaGarantia);
+      }
+    }
+  </script>
+</div>
